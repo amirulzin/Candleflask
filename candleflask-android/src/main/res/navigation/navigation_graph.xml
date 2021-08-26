@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigationGraph"
+    app:startDestination="@+id/navHome">
+
+    <fragment
+        android:id="@+id/navHome"
+        android:name="com.candleflask.android.ui.home.HomeFragment"
+        android:label="@string/nav_label_home"
+        tools:layout="@layout/home_fragment">
+
+        <action
+            android:id="@+id/action_navHome_to_navSearchTicker"
+            app:destination="@id/navSearchTicker"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_navHome_to_navTokenUpdate"
+            app:destination="@id/navTokenUpdate" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navSearchTicker"
+        android:name="com.candleflask.android.ui.searchtickerdialog.SearchTickersFragment"
+        android:label="@string/nav_label_search_ticker"
+        tools:layout="@layout/search_tickers_dialog_fragment" />
+
+    <dialog
+        android:id="@+id/navTokenUpdate"
+        android:name="com.candleflask.android.ui.updatetokendialog.UpdateTokenDialogFragment"
+        android:label="@string/nav_label_update_api_token"
+        tools:layout="@layout/update_token_dialog_fragment" />
+</navigation>

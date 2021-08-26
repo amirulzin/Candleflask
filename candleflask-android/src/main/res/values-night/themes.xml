@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Candleflask" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue_zero</item>
+        <item name="colorPrimaryVariant">@color/blue_one</item>
+        <item name="colorOnPrimary">@color/charcoal_zero</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/purple_one</item>
+        <item name="colorSecondaryVariant">@color/purple_zero</item>
+        <item name="colorOnSecondary">@color/charcoal_zero</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="colorControlNormal">@color/pink_one</item>
+        <!-- SystemUI -->
+        <item name="android:navigationBarColor">@color/blue_zero</item>
+    </style>
+</resources>

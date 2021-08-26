@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!--
+        Use https://www.sessions.edu/color-calculator
+        For one, two, etc variants, use monochromatic with single result
+     -->
+    <color name="blue_zero">#007ACC</color>
+    <color name="blue_one">#247AB3</color>
+
+    <color name="light_blue_zero">#0099FF</color>
+    <color name="light_blue_one">#2E9CE6</color>
+
+    <!-- Teal Zero : Analogous to blue_zero -->
+    <color name="teal_zero">#00CCB8</color>
+    <color name="teal_one">#008F8A</color>
+    <!-- Pink Zero : Triadic to blue_zero -->
+    <color name="pink_zero">#CC007A</color>
+    <color name="pink_one">#8F006D</color>
+    <!-- Yellow Zero : Split Complementary to blue_zero -->
+    <color name="yellow_zero">#CCB800</color>
+    <color name="yellow_one">#B3A524</color>
+    <!-- Red Zero : Split Complementary to teal_zero -->
+    <color name="red_zero">#CC0014</color>
+    <color name="red_one">#B32432</color>
+    <!-- Purple Zero : Tetradic to pink_zero -->
+    <color name="purple_zero">#5200CC</color>
+    <color name="purple_one">#5D24B3</color>
+
+    <!-- Shades of Blacks-->
+    <color name="charcoal_zero">#1E1E1E</color>
+    <color name="charcoal_one">#252526</color>
+    <color name="charcoal_two">#2D2D30</color>
+    <color name="charcoal_three">#3E3E42</color>
+</resources>

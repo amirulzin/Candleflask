@@ -1,0 +1,33 @@
+package com.candleflask.framework.features.tickers
+
+import com.candleflask.framework.domain.entities.ticker.Ticker
+import com.candleflask.framework.domain.entities.ticker.TickerModel
+import kotlinx.coroutines.flow.Flow
+
+interface TickerRepository {
+  fun optionallyReconnect(force: Boolean): OperationResult
+
+  fun disconnect()
+
+  fun retrieveHotTickers(): Flow<List<TickerModel>>
+
+  fun storeAndSubscribeNewTicker(ticker: Ticker): OperationResult
+
+  fun removeAndUnsubscribeTicker(ticker: Ticker): OperationResult
+
+  fun retrieveSubscribedTickers(): Set<Ticker>
+
+  suspend fun forceSnapshotUpdate()
+
+  sealed class OperationResult {
+    object Success : OperationResult()
+    sealed class Error : OperationResult() {
+      object InvalidToken : Error()
+    }
+  }
+
+  enum class StreamingConnectionState {
+    CONNECTED,
+    DISCONNECTED
+  }
+}
