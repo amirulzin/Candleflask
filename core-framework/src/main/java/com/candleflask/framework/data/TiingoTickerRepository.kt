@@ -8,7 +8,6 @@ import com.candleflask.framework.data.datasource.StreamingTickerDataSource.Opera
 import com.candleflask.framework.data.datasource.db.DatabaseController
 import com.candleflask.framework.data.datasource.db.TickerDAO
 import com.candleflask.framework.data.datasource.db.TickerEntity
-import com.candleflask.framework.domain.entities.ticker.PriceCents
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
 import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
@@ -113,15 +112,7 @@ class TiingoTickerRepository @Inject constructor(
 
   override fun retrieveHotTickers(): Flow<List<TickerModel>> {
     return tickerDAO.observeAll().map { list ->
-      list.map { entity ->
-        TickerModel(
-          symbol = entity.tickerSymbol,
-          todayOpenPriceCents = entity.todayOpenPriceCents?.let(::PriceCents),
-          yesterdayClosePriceCents = entity.yesterdayClosePriceCents?.let(::PriceCents),
-          currentPriceCents = entity.currentAskPriceCents?.let(::PriceCents),
-          lastUpdated = entity.lastUpdatedEpochMillis
-        )
-      }
+      list.map(DataMapper::toTickerModel)
     }
   }
 
@@ -153,11 +144,12 @@ class TiingoTickerRepository @Inject constructor(
   }
 
   private fun updateExistingTicker(model: TickerModel) {
-    model.currentPriceCents?.value?.let { currentPrice ->
+    val currentPrice = model.currentPrice
+    if (currentPrice != null) {
       tickerDAO.updateCurrentPrice(
-        TickerDAO.UpdateArgument(
+        TickerDAO.RemoteUpdateArgument(
           tickerSymbol = model.symbol,
-          currentAskPriceCents = null,
+          currentAskPriceCents = DataMapper.toPlainString(currentPrice),
           lastUpdatedEpochMillis = model.lastUpdated ?: currentTimeMillis()
         )
       )

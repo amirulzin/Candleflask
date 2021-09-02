@@ -10,10 +10,7 @@ import org.mockito.kotlin.mock
 import javax.inject.Provider
 
 class TiingoSnapshotTickerDataSourceTest {
-
-  @Test
-  fun retrieve() {
-    val json = """
+  val json = """
         [
           {
             "askSize": null,
@@ -56,6 +53,8 @@ class TiingoSnapshotTickerDataSourceTest {
         ]
       """.trimIndent()
 
+  @Test
+  fun retrieve() {
     val jsonAdapter = TiingoREST.createMoshiBuilder().build()
       .adapter<List<TiingoRESTTickerLatest>>(
         Types.newParameterizedType(
@@ -84,5 +83,26 @@ class TiingoSnapshotTickerDataSourceTest {
       assertEquals(googleTicker.key, result.first { it.symbol == googleTicker.key }.symbol)
       assertEquals(appleTicker.key, result.first { it.symbol == appleTicker.key }.symbol)
     }
+  }
+
+  @Test
+  fun `convert array of JSON should return 2 TickerLatest`() {
+    val jsonAdapter = TiingoREST.createMoshiBuilder().build()
+      .adapter<List<TiingoRESTTickerLatest>>(
+        Types.newParameterizedType(
+          List::class.java,
+          TiingoRESTTickerLatest::class.java
+        )
+      )
+
+    val response = requireNotNull(jsonAdapter.fromJson(json))
+
+    val apple = response[0]
+    assertEquals("AAPL", apple.ticker)
+    assertEquals("148.6", apple.last)
+
+    val google = response[1]
+    assertEquals("GOOGL", google.ticker)
+    assertEquals("2880.08", google.last)
   }
 }

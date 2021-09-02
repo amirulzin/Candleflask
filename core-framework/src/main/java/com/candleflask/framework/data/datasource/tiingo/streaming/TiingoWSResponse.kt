@@ -68,11 +68,11 @@ sealed class TiingoWSResponse(open val messageType: String) {
             epochNanos = nextLong(),
             ticker = nextString(),
             bidSize = readNullable(::nextInt),
-            bidPrice = readNullable(::nextDouble),
-            midPrice = readNullable(::nextDouble),
-            askPrice = readNullable(::nextDouble),
+            bidPrice = readNullable(::nextString),
+            midPrice = readNullable(::nextString),
+            askPrice = readNullable(::nextString),
             askSize = readNullable(::nextInt),
-            lastPrice = readNullable(::nextDouble),
+            lastPrice = readNullable(::nextString),
             lastSize = readNullable(::nextInt),
             halted = readNullable(::nextInt),
             afterHours = readNullable(::nextInt),
@@ -101,11 +101,11 @@ sealed class TiingoWSResponse(open val messageType: String) {
       val epochNanos: Long,
       val ticker: String,
       val bidSize: Int?,
-      val bidPrice: Double?,
-      val midPrice: Double?,
-      val askPrice: Double?,
+      val bidPrice: String?,
+      val midPrice: String?,
+      val askPrice: String?,
       val askSize: Int?,
-      val lastPrice: Double?, //Only for "T" or "B"
+      val lastPrice: String?, //Only for "T" or "B"
       val lastSize: Int?, //Only for "T" or "B"
       val halted: Int?, //0 = not halted, 1 = halted
       val afterHours: Int?, //0 = market hours, 1 = after hours,

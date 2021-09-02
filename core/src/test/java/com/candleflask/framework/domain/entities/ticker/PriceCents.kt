@@ -3,6 +3,9 @@ package com.candleflask.framework.domain.entities.ticker
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * Initial implementation of Double based data model prior to the usage of Java Money API (BigMoney)
+ */
 data class PriceCents(val value: Double) {
   constructor(valueInCents: Long) : this(valueInCents.toDouble())
 

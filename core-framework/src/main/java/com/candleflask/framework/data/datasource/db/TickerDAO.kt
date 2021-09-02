@@ -28,7 +28,7 @@ interface TickerDAO {
   }
 
   @Update(entity = TickerEntity::class)
-  fun updateCurrentPrice(updateArgument: UpdateArgument)
+  fun updateCurrentPrice(remoteUpdateArgument: RemoteUpdateArgument)
 
   @Transaction
   fun deleteBySymbol(vararg tickerSymbols: String) {
@@ -37,9 +37,9 @@ interface TickerDAO {
     }
   }
 
-  data class UpdateArgument(
+  data class RemoteUpdateArgument(
     val tickerSymbol: String,
-    val currentAskPriceCents: Long?,
+    val currentAskPriceCents: String?,
     val lastUpdatedEpochMillis: Long?
   )
 }

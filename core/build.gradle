@@ -13,7 +13,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
     implementation "com.squareup.okhttp3:okhttp:4.9.1"
 
-    implementation 'org.joda:joda-money:1.0.1'
+    api 'org.joda:joda-money:1.0.1'
 
     //Tests
     testImplementation 'junit:junit:4.13.2'

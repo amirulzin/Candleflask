@@ -1,7 +1,5 @@
 package com.candleflask.framework.data.datasource.tiingo.snapshot
 
-import com.candleflask.framework.data.datasource.tiingo.TiingoPriceCentsJsonAdapter
-import com.candleflask.framework.data.datasource.tiingo.TiingoTickerJsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import okhttp3.OkHttpClient
@@ -31,8 +29,6 @@ interface TiingoREST {
     @JvmStatic
     fun createMoshiBuilder(): Moshi.Builder {
       return Moshi.Builder()
-        .add(TiingoTickerJsonAdapter())
-        .add(TiingoPriceCentsJsonAdapter())
         .add(TiingoRESTSimpleDate.JsonAdapter())
         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
     }

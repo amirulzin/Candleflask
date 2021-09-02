@@ -56,7 +56,7 @@ class SearchTickerViewModel @Inject constructor(
       val ticker = Ticker(model.symbol)
       UISearchItem(
         ticker = ticker,
-        priceCents = model.currentPriceCents,
+        priceCents = model.currentPrice?.amount?.toPlainString(),
         info = null,
         isAdded = updateSubscribedTickersUseCase.retrieveSubscribedTickers().contains(ticker)
       )

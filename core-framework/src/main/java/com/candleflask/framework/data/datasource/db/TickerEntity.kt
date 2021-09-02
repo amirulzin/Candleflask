@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class TickerEntity(
   @PrimaryKey
   val tickerSymbol: String,
-  val yesterdayClosePriceCents: Long? = null,
-  val todayOpenPriceCents: Long? = null,
-  val currentAskPriceCents: Long? = null,
+  val yesterdayClosePriceCents: String? = null,
+  val todayOpenPriceCents: String? = null,
+  val currentAskPriceCents: String? = null,
   val lastUpdatedEpochMillis: Long? = null
 )

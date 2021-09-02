@@ -23,7 +23,7 @@ class SubscribedTickersAdapter :
     fun bind(data: UITickerItem) {
       binding.apply {
         tickerName.text = data.model.symbol
-        tickerPrice.text = data.model.currentPriceCents?.standardDisplay ?: "Retrieving"
+        tickerPrice.text = data.model.currentPrice?.amount?.toPlainString() ?: "Retrieving"
       }
     }
   }

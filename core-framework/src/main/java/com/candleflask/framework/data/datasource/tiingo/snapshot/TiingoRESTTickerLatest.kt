@@ -1,27 +1,25 @@
 package com.candleflask.framework.data.datasource.tiingo.snapshot
 
-import com.candleflask.framework.domain.entities.ticker.PriceCents
-import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.squareup.moshi.JsonClass
 import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class TiingoRESTTickerLatest(
-  val bidPrice: PriceCents?,
-  val open: PriceCents?,
-  val prevClose: PriceCents?,
-  val mid: PriceCents?,
+  val bidPrice: String?,
+  val open: String?,
+  val prevClose: String?,
+  val mid: String?,
   val volume: Long?,
   val timestamp: Date,
   val askSize: Long?,
   val lastSize: Long?,
-  val high: PriceCents?,
-  val askPrice: PriceCents?,
-  val low: PriceCents?,
-  val ticker: Ticker,
-  val tngoLast: PriceCents?,
+  val high: String?,
+  val askPrice: String?,
+  val low: String?,
+  val ticker: String,
+  val tngoLast: String?,
   val lastSaleTimestamp: Date,
-  val last: PriceCents?,
+  val last: String?,
   val bidSize: Long?,
   val quoteTimestamp: Date?
 )

@@ -1,12 +1,10 @@
 package com.candleflask.framework.data.datasource.tiingo.streaming
 
+import com.candleflask.framework.data.DataMapper
 import com.candleflask.framework.data.datasource.StreamingTickerDataSource
 import com.candleflask.framework.data.datasource.StreamingTickerDataSource.OperationOutput
-import com.candleflask.framework.domain.entities.ticker.PriceCents
 import com.candleflask.framework.domain.entities.ticker.Ticker
-import com.candleflask.framework.domain.entities.ticker.TickerModel
 import okhttp3.Request
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class TiingoStreamingTickerDataSource @Inject constructor(private val messageConverter: TiingoWSMessageConverter) :
@@ -49,20 +47,9 @@ class TiingoStreamingTickerDataSource @Inject constructor(private val messageCon
     return when (val response = messageConverter.parseWebSocketMessage(message)) {
       is TiingoWSResponse.HeartBeat -> OperationOutput.Heartbeat
       is TiingoWSResponse.Subscribe -> OperationOutput.Unknown
-      is TiingoWSResponse.Tick -> OperationOutput.PriceUpdate(response.asTickerModel())
+      is TiingoWSResponse.Tick -> OperationOutput.PriceUpdate(DataMapper.toTickerModel(response))
       else -> OperationOutput.Unknown
     }
   }
 
-  private fun TiingoWSResponse.Tick.asTickerModel(): TickerModel {
-    return with(data) {
-      TickerModel(
-        symbol = Ticker(ticker).key,
-        todayOpenPriceCents = null,
-        yesterdayClosePriceCents = null,
-        currentPriceCents = lastPrice?.let(::PriceCents),
-        lastUpdated = TimeUnit.NANOSECONDS.toMillis(epochNanos),
-      )
-    }
-  }
 }

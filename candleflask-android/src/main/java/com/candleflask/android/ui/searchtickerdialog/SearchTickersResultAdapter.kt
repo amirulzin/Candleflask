@@ -36,7 +36,7 @@ class SearchTickersResultAdapter(private val itemDelegate: ItemDelegate) :
     fun bind(searchItem: UISearchItem) {
       with(binding) {
         tickerName.text = searchItem.ticker.key
-        tickerInfo.text = searchItem.priceCents?.standardDisplay.orEmpty()
+        tickerInfo.text = searchItem.priceCents?.orEmpty()
         tickerPrice.text = searchItem.info
         tickerIsAdded.visibility = if (searchItem.isAdded) View.VISIBLE else View.GONE
         rootLayout.setOnClickListener {

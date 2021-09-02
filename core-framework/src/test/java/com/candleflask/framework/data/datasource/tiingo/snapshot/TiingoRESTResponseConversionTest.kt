@@ -1,13 +1,17 @@
 package com.candleflask.framework.data.datasource.tiingo.snapshot
 
-import com.candleflask.framework.domain.entities.ticker.PriceCents
-import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class TiingoRESTResponseConversionTest {
+
+  private val moshi
+    get() = TiingoREST
+      .createMoshiBuilder()
+      .build()
+
   @Test
   fun `convert meta info`() {
     val json = """
@@ -21,12 +25,13 @@ class TiingoRESTResponseConversionTest {
     }
   """.trimIndent()
 
-    val result = moshi().adapter(TiingoRESTMetaInfo::class.java).fromJson(json)
-    assertEquals(result?.startDate?.toBasicDisplayString(), "2015-11-19")
-    assertEquals(result?.endDate?.toBasicDisplayString(), "2021-08-27")
-    assertEquals(result?.exchangeCode, "NYSE")
-    assertEquals(result?.ticker, "SQ")
-    assertEquals(result?.name, "Square Inc - Class A")
+    val result = moshi.adapter(TiingoRESTMetaInfo::class.java).fromJson(json)
+    requireNotNull(result)
+    assertEquals(result.startDate?.toBasicDisplayString(), "2015-11-19")
+    assertEquals(result.endDate?.toBasicDisplayString(), "2021-08-27")
+    assertEquals(result.exchangeCode, "NYSE")
+    assertEquals(result.ticker, "SQ")
+    assertEquals(result.name, "Square Inc - Class A")
   }
 
   @Test
@@ -53,14 +58,14 @@ class TiingoRESTResponseConversionTest {
     """.trimIndent()
 
     val type = Types.newParameterizedType(List::class.java, TiingoRESTTickerEndOfDay::class.java)
-    val result = moshi().adapter<List<TiingoRESTTickerEndOfDay>>(type)
+    val result = moshi.adapter<List<TiingoRESTTickerEndOfDay>>(type)
       .fromJson(json)
 
     assertFalse(result.isNullOrEmpty())
-    assertEquals(result?.first()?.close, PriceCents(26801))
+    val model = requireNotNull(result?.first())
+    assertEquals(model.close, "268.01")
+    assertEquals(model.date.time, 1630022400000)
   }
 
-  private fun moshi(): Moshi = TiingoREST
-    .createMoshiBuilder()
-    .build()
+
 }
