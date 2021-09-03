@@ -2,15 +2,18 @@ package com.candleflask.framework.data.datasource.tiingo.snapshot
 
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.squareup.moshi.Types
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
 import javax.inject.Provider
 
 class TiingoSnapshotTickerDataSourceTest {
-  val json = """
+
+  private val json = """
         [
           {
             "askSize": null,
@@ -53,48 +56,45 @@ class TiingoSnapshotTickerDataSourceTest {
         ]
       """.trimIndent()
 
-  @Test
-  fun retrieve() {
-    val jsonAdapter = TiingoREST.createMoshiBuilder().build()
+  private val jsonAdapter by lazy {
+    TiingoREST.createMoshiBuilder().build()
       .adapter<List<TiingoRESTTickerLatest>>(
         Types.newParameterizedType(
           List::class.java,
           TiingoRESTTickerLatest::class.java
         )
       )
+  }
 
-    val resultResponse = requireNotNull(jsonAdapter.fromJson(json))
+  private val resultResponse by lazy {
+    requireNotNull(jsonAdapter.fromJson(json))
+  }
 
+  @Test
+  fun `when request 2 tickers to snapshot API, must return 2 matching TickerModels`() {
     val googleTicker = Ticker("GOOGL")
     val appleTicker = Ticker("AAPL")
     val fakeToken = "fakeToken"
     val tickers = setOf(googleTicker.key, appleTicker.key)
-    val tickersString = tickers.joinToString()
 
-    val tiingoRest = mock<TiingoREST> {
-      onBlocking { iexLatest(tickersString, fakeToken) } doReturn resultResponse
-    }
+    val tiingoRest: TiingoREST = mockk(relaxed = true)
+    coEvery { tiingoRest.iexLatest(any(), any()) } returns resultResponse
 
-    val tiingoRestProvider = Provider<TiingoREST> { tiingoRest }
+    val tiingoRestProvider = Provider { tiingoRest }
+    val dataSource = TiingoSnapshotTickerDataSource(tiingoRestProvider)
 
     runBlocking {
-      val dataSource = TiingoSnapshotTickerDataSource(tiingoRestProvider)
-      val result = dataSource.retrieve(tickers, fakeToken)
-      assertEquals(googleTicker.key, result.first { it.symbol == googleTicker.key }.symbol)
-      assertEquals(appleTicker.key, result.first { it.symbol == appleTicker.key }.symbol)
+      val tickerModels = dataSource.retrieve(tickers, fakeToken)
+      assertEquals(appleTicker.key, tickerModels[0].symbolNormalized)
+      assertEquals(googleTicker.key, tickerModels[1].symbolNormalized)
     }
+
+    coVerify(exactly = 1) { tiingoRest.iexLatest(any(), any()) }
+    confirmVerified(tiingoRest)
   }
 
   @Test
-  fun `convert array of JSON should return 2 TickerLatest`() {
-    val jsonAdapter = TiingoREST.createMoshiBuilder().build()
-      .adapter<List<TiingoRESTTickerLatest>>(
-        Types.newParameterizedType(
-          List::class.java,
-          TiingoRESTTickerLatest::class.java
-        )
-      )
-
+  fun `convert array of JSON should return 2 matching TickerLatest`() {
     val response = requireNotNull(jsonAdapter.fromJson(json))
 
     val apple = response[0]

@@ -30,7 +30,7 @@ class TiingoSnapshotIntegrationTest {
       val result = TiingoSnapshotTickerDataSource(Provider { tiingoREST })
         .retrieve(setOf(targetTicker.key), BuildConfig.INTEGRATION_TEST_API_KEY)
 
-      assertEquals(result.first().symbol, targetTicker.key)
+      assertEquals(result.first().symbolNormalized, targetTicker.key)
     }
   }
 }
