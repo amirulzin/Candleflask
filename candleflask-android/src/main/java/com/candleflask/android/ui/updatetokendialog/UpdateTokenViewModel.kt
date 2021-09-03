@@ -2,7 +2,7 @@ package com.candleflask.android.ui.updatetokendialog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.candleflask.framework.features.securitytoken.UpdateSecurityTokenUseCase
+import com.candleflask.framework.domain.features.securitytoken.UpdateSecurityTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

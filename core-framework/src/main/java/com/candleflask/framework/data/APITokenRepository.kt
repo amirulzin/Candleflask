@@ -1,7 +1,7 @@
 package com.candleflask.framework.data
 
 import com.candleflask.framework.data.datasource.EncryptedDataSource
-import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
+import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
 import javax.inject.Inject
 
 class APITokenRepository @Inject constructor(

@@ -10,10 +10,10 @@ import com.candleflask.framework.data.datasource.db.TickerDAO
 import com.candleflask.framework.data.datasource.db.TickerEntity
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
-import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
-import com.candleflask.framework.features.tickers.TickerRepository
-import com.candleflask.framework.features.tickers.TickerRepository.OperationResult
-import com.candleflask.framework.features.tickers.TickerRepository.StreamingConnectionState
+import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
+import com.candleflask.framework.domain.features.tickers.TickerRepository
+import com.candleflask.framework.domain.features.tickers.TickerRepository.OperationResult
+import com.candleflask.framework.domain.features.tickers.TickerRepository.StreamingConnectionState
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

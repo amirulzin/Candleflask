@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.candleflask.framework.domain.entities.ticker.Ticker
-import com.candleflask.framework.features.tickers.ForceRefreshSnapshotTickersUseCase
-import com.candleflask.framework.features.tickers.IsStreamConnectedUseCase
-import com.candleflask.framework.features.tickers.StreamSubscribedTickersUseCase
-import com.candleflask.framework.features.tickers.UpdateSubscribedTickersUseCase
+import com.candleflask.framework.domain.features.tickers.ForceRefreshSnapshotTickersUseCase
+import com.candleflask.framework.domain.features.tickers.IsStreamConnectedUseCase
+import com.candleflask.framework.domain.features.tickers.StreamSubscribedTickersUseCase
+import com.candleflask.framework.domain.features.tickers.UpdateSubscribedTickersUseCase
 import common.android.network.isNetworkConnected
 import common.android.ui.UIResource
 import dagger.hilt.android.lifecycle.HiltViewModel

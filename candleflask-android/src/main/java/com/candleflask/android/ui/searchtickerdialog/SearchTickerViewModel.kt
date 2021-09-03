@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
-import com.candleflask.framework.features.tickers.SearchTickersUseCase
-import com.candleflask.framework.features.tickers.UpdateSubscribedTickersUseCase
+import com.candleflask.framework.domain.features.tickers.SearchTickersUseCase
+import com.candleflask.framework.domain.features.tickers.UpdateSubscribedTickersUseCase
 import common.android.ui.UIResource
 import common.android.ui.UIResource.*
 import dagger.hilt.android.lifecycle.HiltViewModel

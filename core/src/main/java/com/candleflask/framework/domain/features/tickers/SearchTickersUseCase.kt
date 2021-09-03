@@ -1,8 +1,8 @@
-package com.candleflask.framework.features.tickers
+package com.candleflask.framework.domain.features.tickers
 
 import com.candleflask.framework.data.datasource.SnapshotTickerDataSource
 import com.candleflask.framework.domain.entities.ticker.TickerModel
-import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
+import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
 import java.util.*
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.candleflask.framework.features.tickers
+package com.candleflask.framework.domain.features.tickers
 
 import javax.inject.Inject
 

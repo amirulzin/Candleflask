@@ -6,8 +6,8 @@ import com.candleflask.framework.data.datasource.*
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoREST
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoSnapshotTickerDataSource
 import com.candleflask.framework.data.datasource.tiingo.streaming.TiingoStreamingTickerDataFactory
-import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
-import com.candleflask.framework.features.tickers.TickerRepository
+import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
+import com.candleflask.framework.domain.features.tickers.TickerRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

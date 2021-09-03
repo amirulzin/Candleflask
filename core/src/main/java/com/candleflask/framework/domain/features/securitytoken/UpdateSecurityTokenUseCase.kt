@@ -1,4 +1,4 @@
-package com.candleflask.framework.features.securitytoken
+package com.candleflask.framework.domain.features.securitytoken
 
 import javax.inject.Inject
 
