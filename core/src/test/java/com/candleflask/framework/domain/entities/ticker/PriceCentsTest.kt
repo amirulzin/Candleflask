@@ -22,24 +22,24 @@ class PriceCentsTest {
   }
 
   @Test
-  fun `when Double is rounded, return correct standardDisplay`() {
-    representationMap.forEach { (display, value) ->
-      assertEquals(display, PriceCents(value).standardDisplay)
-    }
-    assertNotEquals("100000000000000.01", PriceCents(100000000000000.009).standardDisplay)
-  }
-
-  @Test
   fun `assume rounding is correct up to edge value`() {
     for (i in 0..Long.MAX_VALUE.countDigit()) {
       val tenthPower = 10L power i
       val double = tenthPower + 0.009
       val testCase = "$tenthPower.01" == PriceCents(double).standardDisplay
       if (!testCase) {
-        println("Edge value at $tenthPower")
+        println("Failing edge value at $tenthPower")
       }
       assumeTrue(testCase)
     }
+  }
+
+  @Test
+  fun `when Double is rounded at edge value, return correct standardDisplay`() {
+    representationMap.forEach { (display, value) ->
+      assertEquals(display, PriceCents(value).standardDisplay)
+    }
+    assertNotEquals("100000000000000.01", PriceCents(100_000_000_000_000.009).standardDisplay)
   }
 
   @Test

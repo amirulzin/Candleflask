@@ -19,9 +19,10 @@ data class PriceCents(val value: Double) {
     private val BIG_DECIMAL_100 = 100.toBigDecimal()
 
     /**
-     * This is only correct up to 14 significant digits (e.g 10,000,000,000,000)
+     * This is only correct up to 14 significant digits (e.g 99,999,999,999,999.99)
+     * right before 100th trillion for 2 scaled BigDecimal.
      *
-     * For historical purpose only. Switched to Java Money API
+     * For historical purpose only (framework-less impl). Switched to Java Money API
      *
      * **History:**
      *
