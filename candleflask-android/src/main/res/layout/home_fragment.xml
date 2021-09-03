@@ -74,7 +74,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/round_half_up_primary_8"
-        android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fabSettingMarker" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/streamConnectionStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/home_web_socket_title"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/bottomFauxPanel"
+        app:layout_constraintStart_toEndOf="@id/streamConnectionStatusImage"
+        app:layout_constraintTop_toTopOf="@id/bottomFauxPanel" />
+
+    <ImageView
+        android:id="@+id/streamConnectionStatusImage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/bottomFauxPanel"
+        app:layout_constraintStart_toStartOf="@id/bottomFauxPanel"
+        app:layout_constraintTop_toTopOf="@id/bottomFauxPanel"
+        tools:src="@drawable/round_white_stroke_8" />
 </androidx.constraintlayout.widget.ConstraintLayout>

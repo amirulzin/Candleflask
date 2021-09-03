@@ -5,7 +5,7 @@ import com.candleflask.framework.domain.entities.ticker.TickerModel
 import kotlinx.coroutines.flow.Flow
 
 interface TickerRepository {
-  fun optionallyReconnect(force: Boolean): OperationResult
+  suspend fun optionallyReconnect(force: Boolean): OperationResult
 
   fun disconnect()
 
@@ -16,6 +16,8 @@ interface TickerRepository {
   fun removeAndUnsubscribeTicker(ticker: Ticker): OperationResult
 
   fun retrieveSubscribedTickers(): Set<Ticker>
+
+  fun isStreamConnected(): Flow<StreamingConnectionState>
 
   suspend fun forceSnapshotUpdate()
 

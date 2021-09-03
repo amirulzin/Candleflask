@@ -1,14 +1,17 @@
 package com.candleflask.framework.domain.entities.ticker
 
 import org.joda.money.BigMoney
+import java.util.*
 
 data class TickerModel(
-  val symbol: String,
+  private val symbol: String,
   val todayOpenPrice: BigMoney? = null,
   val yesterdayClosePrice: BigMoney? = null,
   val currentPrice: BigMoney? = null,
   val lastUpdated: Long? = null,
 ) {
+
+  val symbolNormalized = symbol.uppercase(Locale.US)
 
   val priceMovement = when {
     currentPrice isMoreThanOrFalse todayOpenPrice -> PriceMovement.POSITIVE

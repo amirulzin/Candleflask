@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.candleflask.android.databinding.HomeTickersItemBinding
+import com.candleflask.android.ui.ThemedTypedValues
+import com.candleflask.framework.domain.entities.ticker.TickerModel.PriceMovement.*
 
-class SubscribedTickersAdapter :
+class SubscribedTickersAdapter(private val themedTypedValues: ThemedTypedValues) :
   ListAdapter<UITickerItem, SubscribedTickersAdapter.ViewHolder>(DiffCallback()) {
 
   class ViewHolder(private val binding: HomeTickersItemBinding) :
@@ -20,10 +22,22 @@ class SubscribedTickersAdapter :
       )
     }
 
-    fun bind(data: UITickerItem) {
+    fun bind(data: UITickerItem, themedTypedValues: ThemedTypedValues) {
       binding.apply {
-        tickerName.text = data.model.symbol
-        tickerPrice.text = data.model.currentPrice?.amount?.toPlainString() ?: "Retrieving"
+        tickerName.text = data.model.symbolNormalized
+
+        tickerPrice.apply {
+          text = data.currentPriceString ?: "Retrieving"
+
+          setTextColor(
+            when (data.model.priceMovement) {
+              POSITIVE -> themedTypedValues.textColorPositive
+              NEGATIVE -> themedTypedValues.textColorNegative
+              UNKNOWN -> themedTypedValues.textColorNeutral
+            }
+          )
+        }
+
       }
     }
   }
@@ -33,14 +47,16 @@ class SubscribedTickersAdapter :
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    holder.bind(getItem(position))
+    holder.bind(getItem(position), themedTypedValues)
   }
 
   private class DiffCallback : DiffUtil.ItemCallback<UITickerItem>() {
     override fun areItemsTheSame(oldItem: UITickerItem, newItem: UITickerItem) =
-      oldItem.model.symbol == newItem.model.symbol
+      oldItem.model.symbolNormalized == newItem.model.symbolNormalized
 
     override fun areContentsTheSame(oldItem: UITickerItem, newItem: UITickerItem): Boolean =
       oldItem == newItem
   }
+
+
 }

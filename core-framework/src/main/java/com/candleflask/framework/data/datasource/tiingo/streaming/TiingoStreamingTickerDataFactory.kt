@@ -1,14 +1,14 @@
 package com.candleflask.framework.data.datasource.tiingo.streaming
 
 import com.candleflask.framework.data.DataMapper
-import com.candleflask.framework.data.datasource.StreamingTickerDataSource
-import com.candleflask.framework.data.datasource.StreamingTickerDataSource.OperationOutput
+import com.candleflask.framework.data.datasource.StreamingTickerDataFactory
+import com.candleflask.framework.data.datasource.StreamingTickerDataFactory.OperationOutput
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import okhttp3.Request
 import javax.inject.Inject
 
-class TiingoStreamingTickerDataSource @Inject constructor(private val messageConverter: TiingoWSMessageConverter) :
-  StreamingTickerDataSource {
+class TiingoStreamingTickerDataFactory @Inject constructor(private val messageConverter: TiingoWSMessageConverter) :
+  StreamingTickerDataFactory {
   companion object {
     const val WS_ENDPOINT = "wss://api.tiingo.com/iex"
     const val WS_EVENT_SUBSCRIBE = "subscribe"

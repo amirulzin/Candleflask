@@ -1,24 +1,23 @@
 package com.candleflask.android.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.UiThread
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.candleflask.android.R
 import com.candleflask.android.databinding.HomeFragmentBinding
+import com.candleflask.android.ui.ThemedTypedValues
 import common.android.ui.UIResource
 import common.android.ui.ViewBindingFragment
 import common.android.ui.launchInViewLifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
@@ -35,15 +34,15 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    initViews()
+    initViews(ThemedTypedValues(requireContext()))
     initLogic()
     launchRoutines()
   }
 
   @UiThread
-  private fun initViews() {
+  private fun initViews(themedTypedValues: ThemedTypedValues) {
     with(binding.tickerRecyclerView) {
-      adapter = SubscribedTickersAdapter()
+      adapter = SubscribedTickersAdapter(themedTypedValues)
     }
   }
 
@@ -56,9 +55,8 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
 
     with(binding.refreshLayout) {
       setOnRefreshListener {
-        lifecycleScope.launch {
-          tickersViewModel.connect(forceRefresh = true)
-        }
+        tickersViewModel.refresh(forceRefresh = true)
+        tickersViewModel.connect(forceRefresh = true)
       }
     }
     with(binding.fabAddTicker) {
@@ -91,7 +89,6 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
         tickersViewModel.connect(forceRefresh = true)
       }
     }
-
     launchInViewLifecycleScope {
       tickersViewModel.tickers.collectLatest { list ->
         (binding.tickerRecyclerView.adapter as? SubscribedTickersAdapter)
@@ -100,8 +97,15 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     }
     launchInViewLifecycleScope {
       tickersViewModel.loadingState.collectLatest { state ->
-        Log.d("@DBG-STATE", state.toString())
         binding.refreshLayout.isRefreshing = state is UIResource.Loading
+      }
+    }
+    launchInViewLifecycleScope {
+      tickersViewModel.isStreamConnected.collect { isConnected ->
+        val imageRes =
+          if (isConnected) R.drawable.round_positive_8
+          else R.drawable.round_white_stroke_8
+        binding.streamConnectionStatusImage.setImageResource(imageRes)
       }
     }
   }

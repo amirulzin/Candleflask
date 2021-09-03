@@ -1,3 +1,0 @@
-package com.candleflask.framework.data.datasource
-
-interface LocalTickerDataSource

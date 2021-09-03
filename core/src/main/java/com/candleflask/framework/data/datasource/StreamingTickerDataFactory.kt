@@ -4,7 +4,7 @@ import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
 import okhttp3.Request
 
-interface StreamingTickerDataSource {
+interface StreamingTickerDataFactory {
   fun wsInitializationRequest(token: String): Request
 
   fun wsSubscribeTickersMessage(token: String, vararg tickers: Ticker): String

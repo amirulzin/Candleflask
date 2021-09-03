@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/blue_one</item>
         <item name="colorOnPrimary">@color/charcoal_zero</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple_one</item>
+        <item name="colorSecondary">@color/charcoal_three</item>
         <item name="colorSecondaryVariant">@color/purple_zero</item>
         <item name="colorOnSecondary">@color/charcoal_zero</item>
         <!-- Status bar color. -->
@@ -15,7 +15,12 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="colorControlNormal">@color/pink_one</item>
+
         <!-- SystemUI -->
         <item name="android:navigationBarColor">@color/blue_zero</item>
+
+        <!-- Customs Attributes -->
+        <item name="dayNightTextColorPositive">@color/teal_zero</item>
+        <item name="dayNightTextColorNegative">@color/pink_zero</item>
     </style>
 </resources>

@@ -5,7 +5,7 @@ import com.candleflask.framework.data.TiingoTickerRepository
 import com.candleflask.framework.data.datasource.*
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoREST
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoSnapshotTickerDataSource
-import com.candleflask.framework.data.datasource.tiingo.streaming.TiingoStreamingTickerDataSource
+import com.candleflask.framework.data.datasource.tiingo.streaming.TiingoStreamingTickerDataFactory
 import com.candleflask.framework.features.securitytoken.EncryptedTokenRepository
 import com.candleflask.framework.features.tickers.TickerRepository
 import dagger.Binds
@@ -22,7 +22,7 @@ interface FrameworkModule {
   fun tickerRepository(impl: TiingoTickerRepository): TickerRepository
 
   @Binds
-  fun streamingTickerDataSource(impl: TiingoStreamingTickerDataSource): StreamingTickerDataSource
+  fun streamingTickerDataSource(impl: TiingoStreamingTickerDataFactory): StreamingTickerDataFactory
 
   @Binds
   fun encryptedDataSource(impl: EncryptedSharedPrefsDataSource): EncryptedDataSource

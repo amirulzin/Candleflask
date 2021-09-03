@@ -40,9 +40,9 @@ interface TiingoREST {
   @GET("tiingo/daily/{ticker}/prices")
   suspend fun endOfDay(@Path("ticker") ticker: String, @Query("token") token: String): List<TiingoRESTTickerEndOfDay>
 
-  @GET("iex/{commaSeparatedTickers}")
+  @GET("iex")
   suspend fun iexLatest(
-    @Path("commaSeparatedTickers") commaSeparatedTickers: String,
+    @Query("tickers") commaSeparatedTickers: String,
     @Query("token") token: String
   ): List<TiingoRESTTickerLatest>
 }

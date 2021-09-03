@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.candleflask.framework.domain.entities.ticker.Ticker
-import com.candleflask.framework.features.tickers.DisplaySubscribedTickersUseCase
+import com.candleflask.framework.features.tickers.ForceRefreshSnapshotTickersUseCase
+import com.candleflask.framework.features.tickers.IsStreamConnectedUseCase
+import com.candleflask.framework.features.tickers.StreamSubscribedTickersUseCase
 import com.candleflask.framework.features.tickers.UpdateSubscribedTickersUseCase
 import common.android.network.isNetworkConnected
 import common.android.ui.UIResource
@@ -18,13 +20,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TickersViewModel @Inject constructor(
-  private val subscribedTickersUseCase: DisplaySubscribedTickersUseCase,
+  private val subscribedTickersUseCase: StreamSubscribedTickersUseCase,
   private val updateSubscribedTickersUseCase: UpdateSubscribedTickersUseCase,
+  private val forceRefreshSnapshotTickersUseCase: ForceRefreshSnapshotTickersUseCase,
+  private val isStreamConnectedUseCase: IsStreamConnectedUseCase,
   private val application: Application
 ) : ViewModel() {
 
   private val _loadingState = MutableStateFlow<UIResource<Any>>(UIResource.Empty())
+
   val loadingState: StateFlow<UIResource<Any>> get() = _loadingState
+
+  val isStreamConnected by lazy {
+    isStreamConnectedUseCase.observe()
+  }
 
   val tickers by lazy {
     subscribedTickersUseCase.tickerUpdates
@@ -41,17 +50,26 @@ class TickersViewModel @Inject constructor(
       )
   }
 
-  fun connect(forceRefresh: Boolean) {
-    Log.d("@DBG-CONN", "Connecting with force: $forceRefresh")
-    viewModelScope.launch {
-      if (_loadingState.value !is UIResource.Loading) {
-        _loadingState.value = UIResource.Loading()
+  fun refresh(forceRefresh: Boolean) {
+    if (_loadingState.value !is UIResource.Loading) {
+      viewModelScope.launch {
         withContext(Dispatchers.IO) {
-          if (application.isNetworkConnected()) {
-            subscribedTickersUseCase.execute(forceRefresh)
+          _loadingState.value = UIResource.Loading()
+          if (application.isNetworkConnected() && forceRefresh) {
+            forceRefreshSnapshotTickersUseCase.execute()
           }
+          _loadingState.value = UIResource.Empty()
         }
-        _loadingState.value = UIResource.Empty()
+      }
+    }
+  }
+
+  fun connect(forceRefresh: Boolean) {
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        if (application.isNetworkConnected()) {
+          subscribedTickersUseCase.execute(forceRefresh)
+        }
       }
     }
   }
@@ -59,7 +77,7 @@ class TickersViewModel @Inject constructor(
   fun removeTicker(tickerItem: UITickerItem) {
     viewModelScope.launch {
       withContext(Dispatchers.IO) {
-        updateSubscribedTickersUseCase.removeAndUnsubscribe(Ticker(tickerItem.model.symbol))
+        updateSubscribedTickersUseCase.removeAndUnsubscribe(Ticker(tickerItem.model.symbolNormalized))
       }
     }
   }

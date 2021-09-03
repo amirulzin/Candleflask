@@ -10,7 +10,7 @@ class SearchTickersUseCase @Inject constructor(
   private val snapshotTickerDataSource: SnapshotTickerDataSource,
   private val tokenRepository: EncryptedTokenRepository
 ) {
-  suspend fun search(searchInput: String): Output {
+  suspend fun execute(searchInput: String): Output {
     try {
       val token = tokenRepository.retrieveToken() ?: return Output.TokenError
       val resultList = snapshotTickerDataSource.retrieve(setOf(searchInput.uppercase(Locale.US)), token)

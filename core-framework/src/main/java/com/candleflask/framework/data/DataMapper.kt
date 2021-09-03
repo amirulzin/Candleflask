@@ -7,12 +7,15 @@ import com.candleflask.framework.domain.entities.ticker.TickerModel
 import org.joda.money.BigMoney
 import org.joda.money.CurrencyUnit
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
 object DataMapper {
   @JvmStatic
   fun toPlainString(bigMoney: BigMoney): String {
-    return bigMoney.amount.toPlainString()
+    return bigMoney.withScale(2, RoundingMode.HALF_UP)
+      .amount
+      .toPlainString()
   }
 
   @JvmStatic
@@ -34,7 +37,7 @@ object DataMapper {
   @JvmStatic
   fun toTickerEntity(model: TickerModel) = with(model) {
     TickerEntity(
-      tickerSymbol = symbol,
+      tickerSymbol = symbolNormalized,
       yesterdayClosePriceCents = yesterdayClosePrice?.let(::toPlainString),
       todayOpenPriceCents = todayOpenPrice?.let(::toPlainString),
       currentAskPriceCents = currentPrice?.let(::toPlainString),

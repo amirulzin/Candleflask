@@ -18,6 +18,10 @@
 
         <!-- SystemUI -->
         <item name="android:navigationBarColor">@color/blue_zero</item>
+
+        <!-- Customs Attributes -->
+        <item name="dayNightTextColorPositive">@color/teal_one</item>
+        <item name="dayNightTextColorNegative">@color/pink_one</item>
     </style>
 
     <style name="Theme.Candleflask.NoActionBar">

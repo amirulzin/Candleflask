@@ -11,7 +11,7 @@ class TiingoSnapshotTickerDataSource @Inject constructor(private val tiingoRESTP
   private val tiingoREST by lazy(tiingoRESTProvider::get)
 
   override suspend fun retrieve(symbols: Set<String>, token: String): List<TickerModel> {
-    val commaSeparatedTickers = symbols.joinToString()
+    val commaSeparatedTickers = symbols.joinToString(separator = ",") //API requires 0 space after comma
     val resultList = tiingoREST.iexLatest(commaSeparatedTickers, token)
     return resultList.map(DataMapper::toTickerModel)
   }

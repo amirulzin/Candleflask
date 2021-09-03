@@ -13,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,32 +27,28 @@ class SearchTickerViewModel @Inject constructor(
   }
 
   fun searchTicker(input: String) {
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO) {
       if (searchResultStateFlow.value !is Loading) {
         searchResultStateFlow.value = Loading()
-        withContext(Dispatchers.IO) {
-          searchResultStateFlow.value = when (val resultList = searchTickersUseCase.search(input.trim())) {
-            is SearchTickersUseCase.Output.Success -> Success(resultList.tickers.render())
-            SearchTickersUseCase.Output.NetworkError -> Error("Network Error")
-            SearchTickersUseCase.Output.TokenError -> Error("Invalid token")
-          }
+        searchResultStateFlow.value = when (val resultList = searchTickersUseCase.execute(input.trim())) {
+          is SearchTickersUseCase.Output.Success -> Success(resultList.tickers.render())
+          SearchTickersUseCase.Output.NetworkError -> Error("Network Error")
+          SearchTickersUseCase.Output.TokenError -> Error("Invalid token")
         }
       }
     }
   }
 
   fun addTicker(searchItem: UISearchItem) {
-    viewModelScope.launch {
-      withContext(Dispatchers.IO) {
-        updateSubscribedTickersUseCase.addAndSubscribe(searchItem.ticker)
-      }
+    viewModelScope.launch(Dispatchers.IO) {
+      updateSubscribedTickersUseCase.addAndSubscribe(searchItem.ticker)
     }
   }
 
   @WorkerThread
   private fun List<TickerModel>.render(): List<UISearchItem> {
     return map { model ->
-      val ticker = Ticker(model.symbol)
+      val ticker = Ticker(model.symbolNormalized)
       UISearchItem(
         ticker = ticker,
         priceCents = model.currentPrice?.amount?.toPlainString(),
