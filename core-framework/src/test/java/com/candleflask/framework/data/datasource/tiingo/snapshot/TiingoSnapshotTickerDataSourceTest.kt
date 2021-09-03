@@ -2,13 +2,10 @@ package com.candleflask.framework.data.datasource.tiingo.snapshot
 
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.squareup.moshi.Types
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.confirmVerified
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.mockito.kotlin.*
 import javax.inject.Provider
 
 class TiingoSnapshotTickerDataSourceTest {
@@ -71,26 +68,26 @@ class TiingoSnapshotTickerDataSourceTest {
   }
 
   @Test
-  fun `when request 2 tickers to snapshot API, must return 2 matching TickerModels`() {
+  fun `request 2 tickers to snapshot API, return 2 matching TickerModels in 1 request`() {
     val googleTicker = Ticker("GOOGL")
     val appleTicker = Ticker("AAPL")
     val fakeToken = "fakeToken"
     val tickers = setOf(googleTicker.key, appleTicker.key)
 
-    val tiingoRest: TiingoREST = mockk(relaxed = true)
-    coEvery { tiingoRest.iexLatest(any(), any()) } returns resultResponse
+    val tiingoRest: TiingoREST = mock {
+      onBlocking { iexLatest(any(), any()) } doReturn resultResponse
+    }
 
-    val tiingoRestProvider = Provider { tiingoRest }
-    val dataSource = TiingoSnapshotTickerDataSource(tiingoRestProvider)
-
+    val dataSource = TiingoSnapshotTickerDataSource(Provider { tiingoRest })
     runBlocking {
       val tickerModels = dataSource.retrieve(tickers, fakeToken)
       assertEquals(appleTicker.key, tickerModels[0].symbolNormalized)
       assertEquals(googleTicker.key, tickerModels[1].symbolNormalized)
     }
 
-    coVerify(exactly = 1) { tiingoRest.iexLatest(any(), any()) }
-    confirmVerified(tiingoRest)
+    verifyBlocking(tiingoRest, times(1)) {
+      iexLatest(any(), any())
+    }
   }
 
   @Test
