@@ -12,33 +12,41 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import javax.inject.Singleton
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 interface FrameworkModule {
+  @Singleton
   @Binds
   fun tickerRepository(impl: TiingoTickerRepository): TickerRepository
 
+  @Singleton
   @Binds
   fun streamingTickerDataSource(impl: TiingoStreamingTickerDataFactory): StreamingTickerDataFactory
 
+  @Singleton
   @Binds
   fun encryptedDataSource(impl: EncryptedSharedPrefsDataSource): EncryptedDataSource
 
+  @Singleton
   @Binds
   fun favoriteTickerDataSource(impl: PrefsFavoriteTickerDataSource): FavoriteTickerDataSource
 
+  @Singleton
   @Binds
   fun encryptedTokenRepository(impl: APITokenRepository): EncryptedTokenRepository
 
+  @Singleton
   @Binds
   fun snapshotTickerDataSource(impl: TiingoSnapshotTickerDataSource): SnapshotTickerDataSource
 
-  @InstallIn(ViewModelComponent::class)
+  @InstallIn(SingletonComponent::class)
   @Module
   class FrameworkProvidersModule {
+    @Singleton
     @Provides
     fun tiingoREST(httpClient: OkHttpClient): TiingoREST {
       return TiingoREST.retrofitBuilder(httpClient)
