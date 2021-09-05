@@ -8,7 +8,7 @@
     <string name="token_update_guide">You can get an API token by registering for a free Tiingo account via the link below</string>
     <string name="token_update_link">https://api.tiingo.com/account/api/token</string>
     <string name="token_update_help">This will be stored in Android Keystore and never leaves your device</string>
-    <string name="search_ticker_hint">Search Ticker</string>
+    <string name="search_ticker_hint">Search Exact Ticker</string>
     <string name="nav_label_search_ticker">Search Ticker</string>
     <string name="home_web_socket_title">WebSocket</string>
     <string name="search_empty_result">Empty Search Result</string>
