@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.whenResumed
-import com.candleflask.android.databinding.SearchTickersDialogFragmentBinding
+import com.candleflask.android.databinding.SearchTickersFragmentBinding
 import common.android.ui.UIResource
 import common.android.ui.ViewBindingFragment
 import common.android.ui.launchInViewLifecycleScope
@@ -20,11 +20,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class SearchTickersFragment : ViewBindingFragment<SearchTickersDialogFragmentBinding>() {
+class SearchTickersFragment : ViewBindingFragment<SearchTickersFragmentBinding>() {
   private val searchTickerViewModel: SearchTickerViewModel by viewModels()
 
   override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, attachToParent: Boolean) =
-    SearchTickersDialogFragmentBinding.inflate(inflater, container, false)
+    SearchTickersFragmentBinding.inflate(inflater, container, false)
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
