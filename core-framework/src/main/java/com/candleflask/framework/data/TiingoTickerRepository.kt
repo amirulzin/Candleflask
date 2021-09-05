@@ -1,6 +1,5 @@
 package com.candleflask.framework.data
 
-import android.util.Log
 import com.candleflask.framework.data.datasource.OkHttpWebSocketController
 import com.candleflask.framework.data.datasource.SnapshotTickerDataSource
 import com.candleflask.framework.data.datasource.StreamingTickerDataFactory
@@ -13,10 +12,10 @@ import com.candleflask.framework.domain.entities.ticker.TickerModel
 import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
 import com.candleflask.framework.domain.features.tickers.TickerRepository
 import com.candleflask.framework.domain.features.tickers.TickerRepository.OperationResult
-import com.candleflask.framework.domain.features.tickers.TickerRepository.StreamingConnectionState
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okhttp3.Response
@@ -32,9 +31,7 @@ class TiingoTickerRepository @Inject constructor(
   private val snapshotTickerDataSource: SnapshotTickerDataSource
 ) : TickerRepository {
 
-  private val streamingConnectionState by lazy {
-    MutableStateFlow(StreamingConnectionState.DISCONNECTED)
-  }
+  private val isStreamConnected = MutableStateFlow(false)
 
   private val tickerDAO by lazy {
     databaseController.database.tickerDAO()
@@ -48,23 +45,11 @@ class TiingoTickerRepository @Inject constructor(
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
       super.onClosed(webSocket, code, reason)
-      Log.d("@DBG-WS", "onClosed")
-      streamingConnectionState.value = StreamingConnectionState.DISCONNECTED
-    }
-
-    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-      super.onClosing(webSocket, code, reason)
-      Log.d("@DBG-WS", "onClosing")
-    }
-
-    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-      super.onFailure(webSocket, t, response)
-      Log.e("@DBG-WS", "onFailure", t)
+      notifyWebSocketDisconnected()
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
       super.onMessage(webSocket, text)
-      Log.d("@DBG-WS-MSG", text)
       when (val output = streamingTickerDataFactory.wsHandleMessage(text)) {
         is OperationOutput.PriceUpdate -> updateExistingTickerPrice(output.tickerModel)
         OperationOutput.Heartbeat -> notifyWebSocketConnected()
@@ -76,7 +61,7 @@ class TiingoTickerRepository @Inject constructor(
 
   override suspend fun optionallyReconnect(force: Boolean): OperationResult {
     if (!webSocketController.isSocketConnected()) {
-      notifySocketDisconnected()
+      notifyWebSocketConnected()
     }
 
     val token = encryptedTokenRepository.retrieveToken()
@@ -98,9 +83,7 @@ class TiingoTickerRepository @Inject constructor(
     return OperationResult.Success
   }
 
-  override fun isStreamConnected(): Flow<StreamingConnectionState> = streamingConnectionState
-
-  override suspend fun forceSnapshotUpdate() {
+  override suspend fun forceSnapshotUpdate(): OperationResult {
     val token = encryptedTokenRepository.retrieveToken()
     if (token != null) {
       val symbols = retrieveSubscribedTickers().mapTo(mutableSetOf(), Ticker::key)
@@ -110,11 +93,14 @@ class TiingoTickerRepository @Inject constructor(
           updateTickerSnapshot(tickerModel)
         }
       }
+      return OperationResult.Success
+    } else {
+      return OperationResult.Error.InvalidToken
     }
   }
 
   override fun disconnect() {
-    notifySocketDisconnected()
+    notifyWebSocketDisconnected()
     webSocketController.disconnect()
   }
 
@@ -151,6 +137,10 @@ class TiingoTickerRepository @Inject constructor(
       .toSet()
   }
 
+  override fun isStreamConnected(): StateFlow<Boolean> {
+    return isStreamConnected
+  }
+
   private fun updateExistingTickerPrice(model: TickerModel) {
     val currentPrice = model.currentPrice
     if (currentPrice != null) {
@@ -169,11 +159,11 @@ class TiingoTickerRepository @Inject constructor(
   }
 
   private fun notifyWebSocketConnected() {
-    streamingConnectionState.value = StreamingConnectionState.CONNECTED
+    isStreamConnected.value = true
   }
 
-  private fun notifySocketDisconnected() {
-    streamingConnectionState.value = StreamingConnectionState.DISCONNECTED
+  private fun notifyWebSocketDisconnected() {
+    isStreamConnected.value = false
   }
 
   private fun currentTimeMillis() = System.currentTimeMillis()

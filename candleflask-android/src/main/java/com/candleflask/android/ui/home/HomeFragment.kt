@@ -16,8 +16,8 @@ import common.android.ui.UIResource
 import common.android.ui.ViewBindingFragment
 import common.android.ui.launchInViewLifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
@@ -66,23 +66,6 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     }
   }
 
-  /**
-   * ADDENDUM:
-   * Suspend block is **sequential**.
-   * Don't make the mistake of grouping them all up (initializations, collections)
-   * under a single `lifecycleScope.launch` if there's a blocking call in between.
-   *
-   * WARNING:
-   * As per current lifecycle runtime alphas (2.4.x):
-   *
-   * * `repeatOnLifecycle` will multiply if launchRoutines() was called in OnViewCreated,
-   *   We can change to other fragment, then pop back, and this issue will be displayed.
-   *   Most likely due to LifecycleObserver not being uniquely hashcode()
-   *
-   * * `whenStarted` will not be called if we call this during in onCreate
-   *
-   * Due to the above, we must call this within the Fragment `init` block
-   */
   private fun launchRoutines() {
     launchInViewLifecycleScope {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -101,11 +84,16 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
       }
     }
     launchInViewLifecycleScope {
-      tickersViewModel.isStreamConnected.collect { isConnected ->
-        val imageRes =
-          if (isConnected) R.drawable.round_positive_8
-          else R.drawable.round_white_stroke_8
-        binding.streamConnectionStatusImage.setImageResource(imageRes)
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        launch {
+          tickersViewModel.isStreamConnected.collectLatest { isConnected ->
+            val imageRes = when {
+              isConnected -> R.drawable.round_positive_8
+              else -> R.drawable.round_white_stroke_8
+            }
+            binding.streamConnectionStatusImage.setImageResource(imageRes)
+          }
+        }
       }
     }
   }

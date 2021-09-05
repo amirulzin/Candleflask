@@ -1,7 +1,6 @@
 package com.candleflask.android.ui.home
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.candleflask.framework.domain.entities.ticker.Ticker
@@ -32,7 +31,7 @@ class TickersViewModel @Inject constructor(
   val loadingState: StateFlow<UIResource<Any>> get() = _loadingState
 
   val isStreamConnected by lazy {
-    isStreamConnectedUseCase.observe()
+    isStreamConnectedUseCase.observable
   }
 
   val tickers by lazy {
@@ -92,7 +91,6 @@ class TickersViewModel @Inject constructor(
 
   override fun onCleared() {
     super.onCleared()
-    Log.d("@DBG", "VM Cleared")
     subscribedTickersUseCase.cleanUp()
   }
 }

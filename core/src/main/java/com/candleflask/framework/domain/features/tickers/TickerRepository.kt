@@ -3,9 +3,12 @@ package com.candleflask.framework.domain.features.tickers
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface TickerRepository {
   suspend fun optionallyReconnect(force: Boolean): OperationResult
+
+  suspend fun forceSnapshotUpdate(): OperationResult
 
   fun disconnect()
 
@@ -17,9 +20,7 @@ interface TickerRepository {
 
   fun retrieveSubscribedTickers(): Set<Ticker>
 
-  fun isStreamConnected(): Flow<StreamingConnectionState>
-
-  suspend fun forceSnapshotUpdate()
+  fun isStreamConnected(): StateFlow<Boolean>
 
   sealed class OperationResult {
     object Success : OperationResult()
@@ -28,8 +29,4 @@ interface TickerRepository {
     }
   }
 
-  enum class StreamingConnectionState {
-    CONNECTED,
-    DISCONNECTED
-  }
 }

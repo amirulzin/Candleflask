@@ -91,11 +91,12 @@
 
     <ImageView
         android:id="@+id/streamConnectionStatusImage"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="@id/bottomFauxPanel"
         app:layout_constraintStart_toStartOf="@id/bottomFauxPanel"
         app:layout_constraintTop_toTopOf="@id/bottomFauxPanel"
         tools:src="@drawable/round_white_stroke_8" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
