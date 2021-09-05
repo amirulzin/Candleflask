@@ -10,15 +10,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-  private lateinit var binding: MainActivityBinding
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    binding = MainActivityBinding.inflate(layoutInflater)
-    binding.navHostContainerView
+    val binding = MainActivityBinding.inflate(layoutInflater)
     setContentView(binding.root)
   }
-
 
   override fun onSupportNavigateUp(): Boolean {
     val navController = findNavController(R.id.navHostContainerView)
