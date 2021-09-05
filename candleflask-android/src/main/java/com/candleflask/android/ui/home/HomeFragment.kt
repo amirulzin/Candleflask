@@ -44,6 +44,12 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     with(binding.tickerRecyclerView) {
       adapter = SubscribedTickersAdapter(themedTypedValues)
     }
+    with(binding.refreshLayout) {
+      with(themedTypedValues) {
+        setProgressBackgroundColorSchemeColor(backgroundColor)
+        setColorSchemeColors(colorPrimary, colorSecondary)
+      }
+    }
   }
 
   private fun initLogic() {
