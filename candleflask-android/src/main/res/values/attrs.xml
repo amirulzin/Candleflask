@@ -2,4 +2,5 @@
 <resources>
     <attr name="dayNightTextColorPositive" format="color" />
     <attr name="dayNightTextColorNegative" format="color" />
+    <attr name="dayNightDividerColor" format="color" />
 </resources>

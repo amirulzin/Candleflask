@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.annotation.UiThread
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.candleflask.android.R
 import com.candleflask.android.databinding.HomeFragmentBinding
 import com.candleflask.android.ui.ThemedTypedValues
@@ -43,6 +45,7 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
   private fun initViews(themedTypedValues: ThemedTypedValues) {
     with(binding.tickerRecyclerView) {
       adapter = SubscribedTickersAdapter(themedTypedValues)
+      addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
     }
     with(binding.refreshLayout) {
       with(themedTypedValues) {

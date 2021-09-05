@@ -19,8 +19,12 @@
         <!-- SystemUI -->
         <item name="android:navigationBarColor">@color/blue_zero</item>
 
+        <!-- Override RecyclerView DividerItemDecoration -->
+        <item name="android:listDivider">@drawable/list_divider</item>
+
         <!-- Customs Attributes -->
         <item name="dayNightTextColorPositive">@color/teal_zero</item>
         <item name="dayNightTextColorNegative">@color/pink_zero</item>
+        <item name="dayNightDividerColor">@color/white_12</item>
     </style>
 </resources>
