@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <View
         android:id="@+id/topScrim"
@@ -38,6 +39,7 @@
             android:inputType="textAutoComplete" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/searchButton"
         android:layout_width="wrap_content"
@@ -61,12 +63,34 @@
         app:layout_constraintTop_toBottomOf="@+id/searchTextInputLayout"
         tools:listitem="@layout/search_tickers_item" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/searchResultEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/search_empty_result"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchTextInputLayout" />
+
     <View
         android:id="@+id/bottomScrim"
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="@drawable/round_half_up_primary_8"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/loadingIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/searchTextInputLayout"
+        tools:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

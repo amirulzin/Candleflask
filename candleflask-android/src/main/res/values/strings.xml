@@ -11,5 +11,6 @@
     <string name="search_ticker_hint">Search Ticker</string>
     <string name="nav_label_search_ticker">Search Ticker</string>
     <string name="home_web_socket_title">WebSocket</string>
+    <string name="search_empty_result">Empty Search Result</string>
 
 </resources>

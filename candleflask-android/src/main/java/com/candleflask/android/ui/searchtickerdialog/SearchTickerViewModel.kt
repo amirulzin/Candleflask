@@ -23,7 +23,7 @@ class SearchTickerViewModel @Inject constructor(
   ViewModel() {
 
   val searchResultStateFlow by lazy {
-    MutableStateFlow<UIResource<List<UISearchItem>>>(Success(emptyList()))
+    MutableStateFlow<UIResource<List<UISearchItem>>>(Empty())
   }
 
   fun searchTicker(input: String) {
