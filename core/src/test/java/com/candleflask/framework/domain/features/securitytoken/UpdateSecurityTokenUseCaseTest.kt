@@ -1,5 +1,6 @@
 package com.candleflask.framework.domain.features.securitytoken
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.argumentCaptor
@@ -13,7 +14,9 @@ class UpdateSecurityTokenUseCaseTest {
     val repositoryMock: EncryptedTokenRepository = mock()
     val token = "stubToken"
 
-    UpdateSecurityTokenUseCase(repositoryMock).updateToken(token)
+    runBlocking {
+      UpdateSecurityTokenUseCase(repositoryMock).execute(token)
+    }
 
     argumentCaptor<String> {
       verify(repositoryMock).updateToken(capture())

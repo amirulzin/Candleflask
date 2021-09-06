@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenResumed
 import androidx.navigation.fragment.findNavController
 import com.candleflask.android.databinding.UpdateTokenDialogFragmentBinding
 import common.android.ui.BottomSheetDialogViewBindingFragment
 import common.android.ui.ClipboardUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
@@ -29,20 +27,10 @@ class UpdateTokenDialogFragment : BottomSheetDialogViewBindingFragment<UpdateTok
 
   private val updateTokenViewModel: UpdateTokenViewModel by viewModels()
 
-  init {
-    lifecycleScope.launch {
-      whenResumed {
-        val currentToken = updateTokenViewModel.retrieveCurrentToken()
-        withContext(Dispatchers.Main) {
-          binding.tokenTextInput.setText(currentToken.orEmpty())
-        }
-      }
-    }
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     initLogic()
+    launchRoutines()
   }
 
   private fun initLogic() {
@@ -67,6 +55,15 @@ class UpdateTokenDialogFragment : BottomSheetDialogViewBindingFragment<UpdateTok
       setOnClickListener {
         updateToken()
         post(::navBack)
+      }
+    }
+  }
+
+  private fun launchRoutines() {
+    lifecycleScope.launchWhenResumed {
+      val currentToken = updateTokenViewModel.retrieveCurrentToken()
+      withContext(Dispatchers.Main) {
+        binding.tokenTextInput.setText(currentToken.orEmpty())
       }
     }
   }
