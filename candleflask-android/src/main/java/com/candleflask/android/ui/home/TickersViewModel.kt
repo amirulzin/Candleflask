@@ -31,7 +31,7 @@ class TickersViewModel @Inject constructor(
   val loadingState: StateFlow<UIResource<Any>> get() = _loadingState
 
   val isStreamConnected by lazy {
-    isStreamConnectedUseCase.observable
+    isStreamConnectedUseCase.stateFlow
   }
 
   val tickers by lazy {
