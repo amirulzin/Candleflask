@@ -8,10 +8,6 @@ class UpdateSecurityTokenUseCase @Inject constructor(private val encryptedTokenR
     encryptedTokenRepository.updateToken(token)
   }
 
-  fun isTokenAvailable(): Boolean {
-    return encryptedTokenRepository.isTokenExist()
-  }
-
   fun retrieveToken(): String? {
     return encryptedTokenRepository.retrieveToken()
   }
