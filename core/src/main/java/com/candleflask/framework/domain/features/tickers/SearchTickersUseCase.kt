@@ -1,28 +1,12 @@
 package com.candleflask.framework.domain.features.tickers
 
-import com.candleflask.framework.data.datasource.SnapshotTickerDataSource
 import com.candleflask.framework.domain.entities.ticker.TickerModel
-import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
-import java.util.*
 import javax.inject.Inject
 
 class SearchTickersUseCase @Inject constructor(
-  private val snapshotTickerDataSource: SnapshotTickerDataSource,
-  private val tokenRepository: EncryptedTokenRepository
+  private val tickerRepository: TickerRepository
 ) {
-  suspend fun execute(searchInput: String): Output {
-    try {
-      val token = tokenRepository.retrieveToken() ?: return Output.TokenError
-      val resultList = snapshotTickerDataSource.retrieve(setOf(searchInput.uppercase(Locale.US)), token)
-      return Output.Success(resultList)
-    } catch (e: Exception) {
-      return Output.NetworkError
-    }
-  }
-
-  sealed class Output {
-    data class Success(val tickers: List<TickerModel>) : Output()
-    object NetworkError : Output()
-    object TokenError : Output()
+  suspend fun execute(searchInput: String): TickerRepository.OperationResult<List<TickerModel>> {
+    return tickerRepository.search(searchInput)
   }
 }
