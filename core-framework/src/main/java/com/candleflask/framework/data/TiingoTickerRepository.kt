@@ -11,6 +11,7 @@ import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
 import com.candleflask.framework.domain.features.securitytoken.EncryptedTokenRepository
 import com.candleflask.framework.domain.features.tickers.TickerRepository
+import com.candleflask.framework.domain.features.tickers.TickerRepository.CompletableResult
 import com.candleflask.framework.domain.features.tickers.TickerRepository.OperationResult
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import javax.inject.Inject
 
+@Suppress("LiftReturnOrAssignment")
 class TiingoTickerRepository @Inject constructor(
   private val encryptedTokenRepository: EncryptedTokenRepository,
   private val webSocketController: OkHttpWebSocketController,
@@ -59,14 +61,14 @@ class TiingoTickerRepository @Inject constructor(
     }
   }
 
-  override suspend fun optionallyReconnect(force: Boolean): OperationResult {
+  override suspend fun optionallyReconnect(force: Boolean): CompletableResult {
     if (!webSocketController.isSocketConnected()) {
       notifyWebSocketConnected()
     }
 
     val token = encryptedTokenRepository.retrieveToken()
     if (token == null)
-      return OperationResult.Error.InvalidToken
+      return CompletableResult.InvalidTokenError
     else {
       val initializationRequest = streamingTickerDataFactory.wsInitializationRequest(token)
       webSocketController.optionallyReconnect(initializationRequest, force, wsListener)
@@ -80,12 +82,14 @@ class TiingoTickerRepository @Inject constructor(
         }
       }
     }
-    return OperationResult.Success
+    return CompletableResult.Success
   }
 
-  override suspend fun forceSnapshotUpdate(): OperationResult {
+  override suspend fun forceSnapshotUpdate(): CompletableResult {
     val token = encryptedTokenRepository.retrieveToken()
-    if (token != null) {
+    if (token == null) {
+      return CompletableResult.InvalidTokenError
+    } else {
       val symbols = retrieveSubscribedTickers().mapTo(mutableSetOf(), Ticker::key)
       val result = snapshotTickerDataSource.retrieve(symbols, token)
       if (result.isNotEmpty()) {
@@ -93,9 +97,17 @@ class TiingoTickerRepository @Inject constructor(
           updateTickerSnapshot(tickerModel)
         }
       }
-      return OperationResult.Success
+      return CompletableResult.Success
+    }
+  }
+
+  override suspend fun search(input: String): OperationResult<List<TickerModel>> {
+    val token = encryptedTokenRepository.retrieveToken()
+    if (token == null) {
+      return OperationResult.InvalidTokenError()
     } else {
-      return OperationResult.Error.InvalidToken
+      val searchResult = snapshotTickerDataSource.retrieve(setOf(input), token)
+      return OperationResult.Success(searchResult)
     }
   }
 
@@ -110,25 +122,25 @@ class TiingoTickerRepository @Inject constructor(
     }
   }
 
-  override fun storeAndSubscribeNewTicker(ticker: Ticker): OperationResult {
+  override fun storeAndSubscribeNewTicker(ticker: Ticker): CompletableResult {
     val token = encryptedTokenRepository.retrieveToken()
-      ?: return OperationResult.Error.InvalidToken
+      ?: return CompletableResult.InvalidTokenError
 
     tickerDAO.upsert(TickerEntity(tickerSymbol = ticker.key))
     streamingTickerDataFactory.wsSubscribeTickersMessage(token, ticker)
       .let(webSocketController::sendMessage)
-    return OperationResult.Success
+    return CompletableResult.Success
   }
 
-  override fun removeAndUnsubscribeTicker(ticker: Ticker): OperationResult {
+  override fun removeAndUnsubscribeTicker(ticker: Ticker): CompletableResult {
     val token = encryptedTokenRepository.retrieveToken()
-      ?: return OperationResult.Error.InvalidToken
+      ?: return CompletableResult.InvalidTokenError
 
     tickerDAO.deleteBySymbol(ticker.key)
     streamingTickerDataFactory.wsUnsubscribeTickersMessage(token, ticker)
       .let(webSocketController::sendMessage)
 
-    return OperationResult.Success
+    return CompletableResult.Success
   }
 
   override fun retrieveSubscribedTickers(): Set<Ticker> {

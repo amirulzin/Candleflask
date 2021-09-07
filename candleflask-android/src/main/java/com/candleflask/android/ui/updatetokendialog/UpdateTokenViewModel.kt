@@ -14,8 +14,7 @@ import javax.inject.Inject
 class UpdateTokenViewModel @Inject constructor(
   private val updateSecurityTokenUseCase: UpdateSecurityTokenUseCase,
   private val retrieveSecurityTokenUseCase: RetrieveSecurityTokenUseCase
-) :
-  ViewModel() {
+) : ViewModel() {
 
   fun updateToken(token: String?) {
     viewModelScope.launch(Dispatchers.IO) {
@@ -23,9 +22,7 @@ class UpdateTokenViewModel @Inject constructor(
     }
   }
 
-  suspend fun retrieveCurrentToken(): String? {
-    return withContext(Dispatchers.IO) {
-      retrieveSecurityTokenUseCase.execute()
-    }
+  suspend fun retrieveCurrentToken(): String? = withContext(Dispatchers.IO) {
+    retrieveSecurityTokenUseCase.execute()
   }
 }
