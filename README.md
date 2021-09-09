@@ -18,6 +18,12 @@ A streaming offline first US stock ticker Android app using the free tier of
 - Unit tests for `core`, `core-framework` (infrastructure), AAC ViewModels, and UI layer
 - Sample integration test (at `core-framework` only for now)
 
+## Pics
+
+<img src="/graphics/home-night.png" width="256" /> <img src="/graphics/search-night.png" width="256" /> <img src="/graphics/settings-night.png" width="256" />
+
+<img src="/graphics/daynight-switch.gif" width="360" />
+
 ## Upcoming
 
 - Even more tests
