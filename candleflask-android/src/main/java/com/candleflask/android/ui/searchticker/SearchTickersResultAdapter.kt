@@ -1,4 +1,4 @@
-package com.candleflask.android.ui.searchtickerdialog
+package com.candleflask.android.ui.searchticker
 
 import android.view.LayoutInflater
 import android.view.View

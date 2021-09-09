@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/navSearchTicker"
-        android:name="com.candleflask.android.ui.searchtickerdialog.SearchTickersFragment"
+        android:name="com.candleflask.android.ui.searchticker.SearchTickersFragment"
         android:label="@string/nav_label_search_ticker"
         tools:layout="@layout/search_tickers_fragment" />
 
