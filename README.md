@@ -2,8 +2,8 @@
 
 # CandleFlask
 
-A streaming offline first US stock ticker Android app using the free tier of
-[Tiingo API](https://api.tiingo.com/)
+A streaming offline first US stock ticker Android app based on
+[Tiingo API](https://api.tiingo.com/) free tier.
 
 ## Overview
 
@@ -35,4 +35,4 @@ A streaming offline first US stock ticker Android app using the free tier of
 
 ## License
 
-This project is provided under the [MIT License](LICENSE.md)
+This project is provided under the [Apache 2.0 License](LICENSE.md)
