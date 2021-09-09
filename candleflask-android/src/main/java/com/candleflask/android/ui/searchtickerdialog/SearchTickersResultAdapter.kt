@@ -33,6 +33,7 @@ class SearchTickersResultAdapter(private val itemDelegate: ItemDelegate) :
 
   class ViewHolder(private val binding: SearchTickersItemBinding, private val itemDelegate: ItemDelegate) :
     RecyclerView.ViewHolder(binding.root) {
+
     fun bind(searchItem: UISearchItem) {
       with(binding) {
         tickerName.text = searchItem.ticker.key
