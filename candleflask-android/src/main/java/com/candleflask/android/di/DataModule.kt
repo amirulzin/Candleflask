@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-interface FrameworkModule {
+interface DataModule {
   @Singleton
   @Binds
   fun tickerRepository(impl: TiingoTickerRepository): TickerRepository
