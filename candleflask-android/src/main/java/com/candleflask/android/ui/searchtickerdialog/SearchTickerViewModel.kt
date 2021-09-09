@@ -1,43 +1,38 @@
 package com.candleflask.android.ui.searchtickerdialog
 
-import android.app.Application
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.candleflask.android.di.DelegatedDispatchers
+import com.candleflask.android.di.DelegatedNetwork
+import com.candleflask.android.di.UIDelegatedStateFlow
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.entities.ticker.TickerModel
 import com.candleflask.framework.domain.features.tickers.SearchTickersUseCase
 import com.candleflask.framework.domain.features.tickers.TickerRepository.OperationResult
 import com.candleflask.framework.domain.features.tickers.UpdateSubscribedTickersUseCase
-import common.android.network.isNetworkConnected
-import common.android.ui.UIResource
 import common.android.ui.UIResource.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchTickerViewModel @Inject constructor(
+  private val delegatedDispatchers: DelegatedDispatchers,
   private val searchTickersUseCase: SearchTickersUseCase,
   private val updateSubscribedTickersUseCase: UpdateSubscribedTickersUseCase,
-  private val application: Application
+  private val _searchResultStateFlow: UIDelegatedStateFlow<List<UISearchItem>>,
+  private val delegatedNetwork: DelegatedNetwork
 ) : ViewModel() {
 
-  private val _searchResultStateFlow by lazy {
-    MutableStateFlow<UIResource<List<UISearchItem>>>(Empty())
-  }
-
-  val searchResultStateFlow get() = _searchResultStateFlow.asStateFlow()
+  val searchResultStateFlow = _searchResultStateFlow.immutable
 
   fun searchTicker(input: String) {
-    viewModelScope.launch(Dispatchers.IO) {
-      with(_searchResultStateFlow) {
+    viewModelScope.launch(delegatedDispatchers.IO) {
+      with(_searchResultStateFlow.mutable) {
         if (value !is Loading) {
           when {
-            !application.isNetworkConnected() -> value = Error("Network Disconnected")
+            !delegatedNetwork.isNetworkConnected() -> value = Error("Network Disconnected")
             input.isBlank() -> value = Error("Valid ticker required")
             else -> {
               value = Loading()
@@ -53,7 +48,7 @@ class SearchTickerViewModel @Inject constructor(
   }
 
   fun addTicker(searchItem: UISearchItem) {
-    viewModelScope.launch(Dispatchers.IO) {
+    viewModelScope.launch(delegatedDispatchers.IO) {
       updateSubscribedTickersUseCase.addAndSubscribe(searchItem.ticker)
     }
   }
