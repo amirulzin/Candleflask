@@ -3,6 +3,7 @@ package com.candleflask.android.ui.home
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.candleflask.android.di.DelegatedDispatchers
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.features.tickers.ForceRefreshSnapshotTickersUseCase
 import com.candleflask.framework.domain.features.tickers.IsStreamConnectedUseCase
@@ -11,7 +12,6 @@ import com.candleflask.framework.domain.features.tickers.UpdateSubscribedTickers
 import common.android.network.isNetworkConnected
 import common.android.ui.UIResource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,6 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TickersViewModel @Inject constructor(
+  private val delegatedDispatchers: DelegatedDispatchers,
   private val subscribedTickersUseCase: StreamSubscribedTickersUseCase,
   private val updateSubscribedTickersUseCase: UpdateSubscribedTickersUseCase,
   private val forceRefreshSnapshotTickersUseCase: ForceRefreshSnapshotTickersUseCase,
@@ -41,7 +42,7 @@ class TickersViewModel @Inject constructor(
           UITickerItem(index, item)
         }
       }
-      .flowOn(Dispatchers.Default)
+      .flowOn(delegatedDispatchers.DEFAULT)
       .stateIn(
         viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -52,7 +53,7 @@ class TickersViewModel @Inject constructor(
   fun refresh(forceRefresh: Boolean) {
     if (_loadingState.value !is UIResource.Loading) {
       viewModelScope.launch {
-        withContext(Dispatchers.IO) {
+        withContext(delegatedDispatchers.IO) {
           _loadingState.value = UIResource.Loading()
           if (application.isNetworkConnected() && forceRefresh) {
             forceRefreshSnapshotTickersUseCase.execute()
@@ -65,7 +66,7 @@ class TickersViewModel @Inject constructor(
 
   fun connect(forceRefresh: Boolean) {
     viewModelScope.launch {
-      withContext(Dispatchers.IO) {
+      withContext(delegatedDispatchers.IO) {
         if (application.isNetworkConnected()) {
           subscribedTickersUseCase.execute(forceRefresh)
         }
@@ -75,7 +76,7 @@ class TickersViewModel @Inject constructor(
 
   fun removeTicker(tickerItem: UITickerItem) {
     viewModelScope.launch {
-      withContext(Dispatchers.IO) {
+      withContext(delegatedDispatchers.IO) {
         updateSubscribedTickersUseCase.removeAndUnsubscribe(Ticker(tickerItem.model.symbolNormalized))
       }
     }
@@ -83,7 +84,7 @@ class TickersViewModel @Inject constructor(
 
   fun addTicker(ticker: Ticker) {
     viewModelScope.launch {
-      withContext(Dispatchers.IO) {
+      withContext(delegatedDispatchers.IO) {
         updateSubscribedTickersUseCase.addAndSubscribe(ticker)
       }
     }
