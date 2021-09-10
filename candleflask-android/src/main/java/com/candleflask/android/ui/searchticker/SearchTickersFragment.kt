@@ -10,7 +10,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.whenResumed
+import com.candleflask.android.R
 import com.candleflask.android.databinding.SearchTickersFragmentBinding
+import com.google.android.material.snackbar.Snackbar
 import common.android.ui.UIResource
 import common.android.ui.ViewBindingFragment
 import common.android.ui.launchInViewLifecycleScope
@@ -97,6 +99,7 @@ class SearchTickersFragment : ViewBindingFragment<SearchTickersFragmentBinding>(
 
   private fun onClickItem(searchItem: UISearchItem) {
     searchTickerViewModel.addTicker(searchItem)
+    Snackbar.make(binding.root, R.string.toast_ticker_added, Snackbar.LENGTH_SHORT).show()
   }
 
   private fun showError(message: String?) {
