@@ -78,7 +78,8 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
   private fun launchRoutines() {
     launchInViewLifecycleScope {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
-        tickersViewModel.connect(forceRefresh = true)
+        tickersViewModel.refresh(forceRefresh = true)
+        tickersViewModel.connect(forceRefresh = false)
       }
     }
     launchInViewLifecycleScope {
