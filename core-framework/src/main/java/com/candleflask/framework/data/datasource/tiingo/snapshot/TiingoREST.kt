@@ -34,13 +34,13 @@ interface TiingoREST {
     }
   }
 
-  @GET("tiingo/daily/{ticker}")
+  @GET("tiingo/daily/{ticker}/")
   suspend fun metaInfo(@Path("ticker") ticker: String, @Query("token") token: String): TiingoRESTMetaInfo
 
-  @GET("tiingo/daily/{ticker}/prices")
+  @GET("tiingo/daily/{ticker}/prices/")
   suspend fun endOfDay(@Path("ticker") ticker: String, @Query("token") token: String): List<TiingoRESTTickerEndOfDay>
 
-  @GET("iex")
+  @GET("iex/")
   suspend fun iexLatest(
     @Query("tickers") commaSeparatedTickers: String,
     @Query("token") token: String
