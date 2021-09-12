@@ -34,6 +34,7 @@ class TickersViewModel @Inject constructor(
 
   private var initJob: Job? = null
 
+  private val isExpandedMode = AtomicBoolean(false)
 
   private val _tickers = MutableStateFlow<List<UITickerItem>>(emptyList())
   val tickers = _tickers.asStateFlow()
@@ -97,6 +98,15 @@ class TickersViewModel @Inject constructor(
     viewModelScope.launch {
       withContext(delegatedDispatchers.IO) {
         updateSubscribedTickersUseCase.addAndSubscribe(ticker)
+      }
+    }
+  }
+
+  fun toggleExpandedMode(isEnabled: Boolean = !isExpandedMode.get()) {
+    viewModelScope.launch {
+      isExpandedMode.set(isEnabled)
+      _tickers.update { list ->
+        list.map { ticker -> ticker.copy(isExpanded = isEnabled) }
       }
     }
   }

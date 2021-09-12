@@ -34,6 +34,12 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
 
   private val tickersViewModel: TickersViewModel by viewModels()
 
+  private val tickerAdapterDelegate = object : SubscribedTickersAdapter.ItemDelegate {
+    override fun onClickDelete(data: UITickerItem) {
+      tickersViewModel.removeTicker(data)
+    }
+  }
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     initViews(ThemedTypedValues(requireContext()))
@@ -44,7 +50,7 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
   @UiThread
   private fun initViews(themedTypedValues: ThemedTypedValues) {
     with(binding.tickerRecyclerView) {
-      adapter = SubscribedTickersAdapter(themedTypedValues)
+      adapter = SubscribedTickersAdapter(themedTypedValues, tickerAdapterDelegate)
       addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
     }
     with(binding.refreshLayout) {
@@ -73,6 +79,12 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     with(binding.fabAddTicker) {
       setOnClickListener {
         findNavController().navigate(R.id.action_navHome_to_navSearchTicker)
+      }
+    }
+
+    with(binding.fabExpandedMode) {
+      setOnClickListener {
+        tickersViewModel.toggleExpandedMode()
       }
     }
   }
