@@ -8,4 +8,9 @@ import javax.inject.Inject
 class UIDelegatedStateFlow<T> @Inject constructor() {
   val mutable = MutableStateFlow<UIResource<T>>(UIResource.Empty())
   val immutable = mutable.asStateFlow()
+  var value
+    get() = mutable.value
+    set(value) {
+      mutable.value = value
+    }
 }
