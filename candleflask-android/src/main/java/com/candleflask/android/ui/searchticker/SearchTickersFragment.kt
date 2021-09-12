@@ -77,7 +77,7 @@ class SearchTickersFragment : ViewBindingFragment<SearchTickersFragmentBinding>(
     }
 
     with(binding.searchTextInput) {
-      setOnEditorActionListener { v, actionId, event ->
+      setOnEditorActionListener { _, actionId, _ ->
         if (actionId == EditorInfo.IME_ACTION_DONE) {
           invokeSearch()
           hideKeyboard()
