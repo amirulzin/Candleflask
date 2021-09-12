@@ -38,7 +38,7 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     super.onViewCreated(view, savedInstanceState)
     initViews(ThemedTypedValues(requireContext()))
     initLogic()
-    launchRoutines()
+    launchRoutines(savedInstanceState == null)
   }
 
   @UiThread
@@ -64,8 +64,10 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
 
     with(binding.refreshLayout) {
       setOnRefreshListener {
-        tickersViewModel.refresh(forceRefresh = true)
-        tickersViewModel.connect(forceRefresh = true)
+        with(tickersViewModel) {
+          refresh(forceRefresh = true)
+          connect(forceRefresh = true)
+        }
       }
     }
     with(binding.fabAddTicker) {
@@ -75,11 +77,16 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
     }
   }
 
-  private fun launchRoutines() {
-    launchInViewLifecycleScope {
-      repeatOnLifecycle(Lifecycle.State.STARTED) {
-        tickersViewModel.refresh(forceRefresh = true)
-        tickersViewModel.connect(forceRefresh = false)
+  private fun launchRoutines(shouldInit: Boolean) {
+    if (shouldInit) {
+      launchInViewLifecycleScope {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+          with(tickersViewModel) {
+            optionallyInit()
+            refresh(forceRefresh = true)
+            connect(forceRefresh = false)
+          }
+        }
       }
     }
     launchInViewLifecycleScope {
