@@ -1,9 +1,9 @@
 package com.candleflask.framework.integration
 
+import com.candleflask.framework.BuildConfig
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoREST
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoSnapshotTickerDataSource
 import com.candleflask.framework.domain.entities.ticker.Ticker
-import com.candleflask.framework.framework.BuildConfig
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals

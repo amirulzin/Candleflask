@@ -1,6 +1,6 @@
 package com.candleflask.framework.data.datasource.tiingo.snapshot
 
-import com.candleflask.framework.framework.BuildConfig
+import com.candleflask.framework.BuildConfig
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 import java.text.ParseException

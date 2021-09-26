@@ -1,8 +1,10 @@
-package com.candleflask.android.di
+package com.candleflask.framework
 
 import com.candleflask.framework.data.APITokenRepository
 import com.candleflask.framework.data.TiingoTickerRepository
 import com.candleflask.framework.data.datasource.*
+import com.candleflask.framework.data.datasource.db.DatabaseController
+import com.candleflask.framework.data.datasource.db.TickerDAO
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoREST
 import com.candleflask.framework.data.datasource.tiingo.snapshot.TiingoSnapshotTickerDataSource
 import com.candleflask.framework.data.datasource.tiingo.streaming.TiingoStreamingTickerDataFactory
@@ -43,6 +45,10 @@ interface DataModule {
   @Binds
   fun snapshotTickerDataSource(impl: TiingoSnapshotTickerDataSource): SnapshotTickerDataSource
 
+  @Singleton
+  @Binds
+  fun webSocketController(impl: OkHttpWebSocketController): WebSocketController
+
   @InstallIn(SingletonComponent::class)
   @Module
   class FrameworkProvidersModule {
@@ -52,6 +58,12 @@ interface DataModule {
       return TiingoREST.retrofitBuilder(httpClient)
         .build()
         .create(TiingoREST::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun tickerDAO(databaseController: DatabaseController): TickerDAO {
+      return databaseController.database.tickerDAO()
     }
   }
 }

@@ -8,7 +8,9 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import javax.inject.Provider
 
-class OkHttpWebSocketController @Inject constructor(private val httpClientProvider: Provider<OkHttpClient>) {
+class OkHttpWebSocketController @Inject constructor(
+  private val httpClientProvider: Provider<OkHttpClient>
+) : WebSocketController {
   companion object {
     private const val WS_CLOSURE_CODE = 1_000 //RFC 6455
   }
@@ -17,9 +19,9 @@ class OkHttpWebSocketController @Inject constructor(private val httpClientProvid
 
   private val mainSocketRef: AtomicReference<WebSocket?> = AtomicReference()
 
-  fun optionallyReconnect(
+  override fun optionallyReconnect(
     initializationRequest: Request,
-    force: Boolean = false,
+    force: Boolean,
     listener: WebSocketListener
   ) {
     if (mainSocketRef.get() != null && force) {
@@ -31,7 +33,7 @@ class OkHttpWebSocketController @Inject constructor(private val httpClientProvid
     }
   }
 
-  fun disconnect() {
+  override fun disconnect() {
     try {
       mainSocketRef.get()?.close(WS_CLOSURE_CODE, reason = null)
     } finally {
@@ -39,9 +41,9 @@ class OkHttpWebSocketController @Inject constructor(private val httpClientProvid
     }
   }
 
-  fun sendMessage(message: String) {
+  override fun sendMessage(message: String) {
     mainSocketRef.get()?.send(message)
   }
 
-  fun isSocketConnected(): Boolean = mainSocketRef.get() != null
+  override fun isSocketConnected(): Boolean = mainSocketRef.get() != null
 }

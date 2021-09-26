@@ -1,10 +1,9 @@
 package com.candleflask.framework.data
 
-import com.candleflask.framework.data.datasource.OkHttpWebSocketController
 import com.candleflask.framework.data.datasource.SnapshotTickerDataSource
 import com.candleflask.framework.data.datasource.StreamingTickerDataFactory
 import com.candleflask.framework.data.datasource.StreamingTickerDataFactory.OperationOutput
-import com.candleflask.framework.data.datasource.db.DatabaseController
+import com.candleflask.framework.data.datasource.WebSocketController
 import com.candleflask.framework.data.datasource.db.TickerDAO
 import com.candleflask.framework.data.datasource.db.TickerEntity
 import com.candleflask.framework.domain.entities.ticker.Ticker
@@ -23,21 +22,19 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import javax.inject.Inject
+import javax.inject.Provider
 
-@Suppress("LiftReturnOrAssignment")
 class TiingoTickerRepository @Inject constructor(
   private val encryptedTokenRepository: EncryptedTokenRepository,
-  private val webSocketController: OkHttpWebSocketController,
-  private val databaseController: DatabaseController,
+  private val webSocketController: WebSocketController,
   private val streamingTickerDataFactory: StreamingTickerDataFactory,
-  private val snapshotTickerDataSource: SnapshotTickerDataSource
+  private val snapshotTickerDataSource: SnapshotTickerDataSource,
+  private val tickerDAOProvider: Provider<TickerDAO>
 ) : TickerRepository {
 
   private val isStreamConnected = MutableStateFlow(false)
 
-  private val tickerDAO by lazy {
-    databaseController.database.tickerDAO()
-  }
+  private val tickerDAO by lazy(tickerDAOProvider::get)
 
   private val wsListener = object : WebSocketListener() {
     override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -101,6 +98,7 @@ class TiingoTickerRepository @Inject constructor(
     }
   }
 
+  @Suppress("LiftReturnOrAssignment")
   override suspend fun search(input: String): OperationResult<List<TickerModel>> {
     val token = encryptedTokenRepository.retrieveToken()
     if (token == null) {
