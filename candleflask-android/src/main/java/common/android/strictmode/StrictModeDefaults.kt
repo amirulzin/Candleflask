@@ -11,7 +11,7 @@ object StrictModeDefaults {
    * since its incorrectly warns default OkHttp behaviors
    */
   @JvmStatic
-  @TargetApi(Build.VERSION_CODES.Q)
+  @TargetApi(Build.VERSION_CODES.S)
   fun enableDefaultsWithoutSocketTagging() {
     val threadPolicy = StrictMode.ThreadPolicy.Builder()
       .detectAll()
@@ -37,15 +37,15 @@ object StrictModeDefaults {
       }
       if (targetSdk >= Build.VERSION_CODES.O) {
         detectContentUriWithoutPermission()
-//        detectUntaggedSockets()
+        // detectUntaggedSockets()
       }
       if (targetSdk >= Build.VERSION_CODES.Q) {
         detectCredentialProtectedWhileLocked()
       }
-//        TODO enable when compiling/targeting SDK 31+
-//        if (targetSdk >= Build.VERSION_CODES.R) {
-//          detectIncorrectContextUse()
-//        }
+
+      if (targetSdk >= Build.VERSION_CODES.R) {
+        detectIncorrectContextUse()
+      }
     }.penaltyLog()
       .build()
 
