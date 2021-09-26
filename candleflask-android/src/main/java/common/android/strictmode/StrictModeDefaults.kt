@@ -43,7 +43,7 @@ object StrictModeDefaults {
         detectCredentialProtectedWhileLocked()
       }
 
-      if (targetSdk >= Build.VERSION_CODES.R) {
+      if (targetSdk >= Build.VERSION_CODES.S) {
         detectIncorrectContextUse()
       }
     }.penaltyLog()
