@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    api project(':core')
-    api project(':core-framework')
+    implementation project(':core')
+    implementation project(':core-framework')
 
     //Hilt
     def hilt_version = "2.38.1"
