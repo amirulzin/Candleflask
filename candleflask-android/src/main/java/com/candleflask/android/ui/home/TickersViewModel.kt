@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TickersViewModel @Inject constructor(
   private val delegatedDispatchers: DelegatedDispatchers,
-  private val subscribedTickersUseCase: StreamSubscribedTickersUseCase,
+  private val streamSubscribedTickersUseCase: StreamSubscribedTickersUseCase,
   private val updateSubscribedTickersUseCase: UpdateSubscribedTickersUseCase,
   private val forceRefreshSnapshotTickersUseCase: ForceRefreshSnapshotTickersUseCase,
   private val isStreamConnectedUseCase: IsStreamConnectedUseCase,
@@ -51,7 +51,7 @@ class TickersViewModel @Inject constructor(
   fun optionallyInit() {
     if (initJob == null) {
       initJob = viewModelScope.launch(delegatedDispatchers.IO) {
-        subscribedTickersUseCase.tickerUpdates.map { tickerPrice ->
+        streamSubscribedTickersUseCase.tickerUpdates.map { tickerPrice ->
           tickerPrice.mapIndexed { index, item ->
             UITickerItem(index, item, isExpanded = isExpandedMode.get())
           }
@@ -80,7 +80,7 @@ class TickersViewModel @Inject constructor(
     viewModelScope.launch {
       withContext(delegatedDispatchers.IO) {
         if (application.isNetworkConnected()) {
-          subscribedTickersUseCase.execute(forceRefresh)
+          streamSubscribedTickersUseCase.execute(forceRefresh)
         }
       }
     }
@@ -113,7 +113,7 @@ class TickersViewModel @Inject constructor(
 
   override fun onCleared() {
     super.onCleared()
-    subscribedTickersUseCase.cleanUp()
+    streamSubscribedTickersUseCase.cleanUp()
     initJob = null
   }
 }
