@@ -59,10 +59,6 @@ class TiingoTickerRepository @Inject constructor(
   }
 
   override suspend fun optionallyReconnect(force: Boolean): CompletableResult {
-    if (!webSocketController.isSocketConnected()) {
-      notifyWebSocketConnected()
-    }
-
     val token = encryptedTokenRepository.retrieveToken()
     if (token == null)
       return CompletableResult.InvalidTokenError
