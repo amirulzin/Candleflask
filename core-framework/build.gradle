@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk androidProps.targetSdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
+        minSdk androidProps.minSdk
+        targetSdk androidProps.targetSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -46,28 +46,25 @@ String retrieveLocalStringProperty(String propertyKey) {
 dependencies {
     implementation project(":core")
 
-    implementation 'javax.inject:javax.inject:1'
-
-    def hilt_version = "2.38.1"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-
-    def moshi_version = "1.12.0"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
-    implementation "com.squareup.moshi:moshi:$moshi_version"
-    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
-
-    def retrofit_version = "2.9.0"
-    api "com.squareup.retrofit2:retrofit:$retrofit_version" //'api' since Retrofit generated interfaces are inter-module
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
-
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
-
+    //Android
+    implementation "androidx.core:core-ktx:$commonLibVersions.androidCoreKtx"
     implementation "androidx.security:security-crypto-ktx:1.1.0-alpha03"
 
-    implementation 'androidx.core:core-ktx:1.6.0'
+    kapt "com.google.dagger:hilt-compiler:$commonLibVersions.hilt"
+    implementation "com.google.dagger:hilt-android:$commonLibVersions.hilt"
+
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$commonLibVersions.moshi"
+    implementation "com.squareup.moshi:moshi:$commonLibVersions.moshi"
+    implementation "com.squareup.moshi:moshi-adapters:$commonLibVersions.moshi"
+
+    //'api' as Retrofit generated interfaces are inter-module
+    api "com.squareup.retrofit2:retrofit:$commonLibVersions.retrofit"
+    implementation "com.squareup.retrofit2:converter-moshi:$commonLibVersions.retrofit"
+    implementation "com.squareup.okhttp3:okhttp:$commonLibVersions.okhttp"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$commonLibVersions.kotlin"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$commonLibVersions.coroutinesCore"
+
 
     def room_version = "2.3.0"
     implementation "androidx.room:room-ktx:$room_version"
@@ -75,9 +72,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     //Tests
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation "junit:junit:$commonTestVersions.junit"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$commonTestVersions.mockitoKotlin"
 }

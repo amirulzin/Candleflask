@@ -9,13 +9,13 @@ java {
 }
 
 dependencies {
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    implementation "javax.inject:javax.inject:$commonLibVersions.javaxInject"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$commonLibVersions.coroutinesCore"
+    implementation "com.squareup.okhttp3:okhttp:$commonLibVersions.okhttp"
 
-    api 'org.joda:joda-money:1.0.1'
+    api "org.joda:joda-money:$commonLibVersions.jodaMoney"
 
     //Tests
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
+    testImplementation "junit:junit:$commonTestVersions.junit"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$commonTestVersions.mockitoKotlin"
 }
