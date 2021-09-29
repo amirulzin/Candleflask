@@ -29,7 +29,7 @@ class SearchTickerViewModel @Inject constructor(
 
   fun searchTicker(input: String) {
     viewModelScope.launch(delegatedDispatchers.IO) {
-      with(_searchResultStateFlow.mutable) {
+      with(_searchResultStateFlow) {
         if (value !is Loading) {
           when {
             !delegatedNetwork.isNetworkConnected() -> value = Error("Network Disconnected")
