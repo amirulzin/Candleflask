@@ -1,23 +1,22 @@
 package com.candleflask.android.ui.home
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.candleflask.android.di.DelegatedDispatchers
+import com.candleflask.android.di.DelegatedNetwork
 import com.candleflask.android.di.UIDelegatedStateFlow
 import com.candleflask.framework.domain.entities.ticker.Ticker
 import com.candleflask.framework.domain.features.tickers.ForceRefreshSnapshotTickersUseCase
 import com.candleflask.framework.domain.features.tickers.IsStreamConnectedUseCase
 import com.candleflask.framework.domain.features.tickers.StreamSubscribedTickersUseCase
 import com.candleflask.framework.domain.features.tickers.UpdateSubscribedTickersUseCase
-import common.android.network.isNetworkConnected
 import common.android.ui.UIResource
 import common.android.ui.UIResource.Loading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -29,15 +28,15 @@ class TickersViewModel @Inject constructor(
   private val forceRefreshSnapshotTickersUseCase: ForceRefreshSnapshotTickersUseCase,
   private val isStreamConnectedUseCase: IsStreamConnectedUseCase,
   private val _loadingState: UIDelegatedStateFlow<Any>,
-  private val application: Application
+  private val _tickers: UIDelegatedStateFlow<List<UITickerItem>>,
+  private val delegatedNetwork: DelegatedNetwork
 ) : ViewModel() {
 
   private var initJob: Job? = null
 
   private val isExpandedMode = AtomicBoolean(false)
 
-  private val _tickers = MutableStateFlow<List<UITickerItem>>(emptyList())
-  val tickers = _tickers.asStateFlow()
+  val tickers = _tickers.immutable
 
   val loadingState = _loadingState.immutable
 
@@ -54,9 +53,9 @@ class TickersViewModel @Inject constructor(
         streamSubscribedTickersUseCase.tickerUpdates.map { tickerPrice ->
           tickerPrice.mapIndexed { index, item ->
             UITickerItem(index, item, isExpanded = isExpandedMode.get())
-          }
+          }.let { UIResource.Success(it) }
         }.collectLatest { tickerList ->
-          _tickers.update { tickerList }
+          _tickers.value = tickerList
         }
       }
     }
@@ -64,12 +63,10 @@ class TickersViewModel @Inject constructor(
 
   fun refresh(forceRefresh: Boolean) {
     if (_loadingState.value !is Loading) {
-      viewModelScope.launch {
-        withContext(delegatedDispatchers.IO) {
+      viewModelScope.launch(delegatedDispatchers.IO) {
+        if (delegatedNetwork.isNetworkConnected() && forceRefresh) {
           _loadingState.value = Loading()
-          if (application.isNetworkConnected() && forceRefresh) {
-            forceRefreshSnapshotTickersUseCase.execute()
-          }
+          forceRefreshSnapshotTickersUseCase.execute()
           _loadingState.value = UIResource.Success(Any())
         }
       }
@@ -77,33 +74,21 @@ class TickersViewModel @Inject constructor(
   }
 
   fun connect(forceRefresh: Boolean) {
-    viewModelScope.launch {
-      withContext(delegatedDispatchers.IO) {
-        if (application.isNetworkConnected()) {
-          streamSubscribedTickersUseCase.execute(forceRefresh)
-        }
+    viewModelScope.launch(delegatedDispatchers.IO) {
+      if (delegatedNetwork.isNetworkConnected()) {
+        streamSubscribedTickersUseCase.execute(forceRefresh)
       }
     }
   }
 
   fun removeTicker(tickerItem: UITickerItem) {
-    viewModelScope.launch {
-      withContext(delegatedDispatchers.IO) {
-        updateSubscribedTickersUseCase.removeAndUnsubscribe(Ticker(tickerItem.model.symbolNormalized))
-      }
-    }
-  }
-
-  fun addTicker(ticker: Ticker) {
-    viewModelScope.launch {
-      withContext(delegatedDispatchers.IO) {
-        updateSubscribedTickersUseCase.addAndSubscribe(ticker)
-      }
+    viewModelScope.launch(delegatedDispatchers.IO) {
+      updateSubscribedTickersUseCase.removeAndUnsubscribe(Ticker(tickerItem.model.symbolNormalized))
     }
   }
 
   fun toggleExpandedMode(isEnabled: Boolean = !isExpandedMode.get()) {
-    viewModelScope.launch {
+    viewModelScope.launch(delegatedDispatchers.DEFAULT) {
       isExpandedMode.set(isEnabled)
       _tickers.update { list ->
         list.map { ticker -> ticker.copy(isExpanded = isEnabled) }

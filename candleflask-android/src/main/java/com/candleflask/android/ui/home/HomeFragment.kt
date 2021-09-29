@@ -53,6 +53,7 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
       adapter = SubscribedTickersAdapter(themedTypedValues, tickerAdapterDelegate)
       addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
     }
+
     with(binding.refreshLayout) {
       with(themedTypedValues) {
         setProgressBackgroundColorSchemeColor(backgroundColor)
@@ -76,6 +77,7 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
         }
       }
     }
+
     with(binding.fabAddTicker) {
       setOnClickListener {
         findNavController().navigate(R.id.action_navHome_to_navSearchTicker)
@@ -101,17 +103,22 @@ class HomeFragment : ViewBindingFragment<HomeFragmentBinding>() {
         }
       }
     }
+
     launchInViewLifecycleScope {
-      tickersViewModel.tickers.collectLatest { list ->
-        (binding.tickerRecyclerView.adapter as? SubscribedTickersAdapter)
-          ?.submitList(list)
+      tickersViewModel.tickers.collectLatest { state ->
+        if (state is UIResource.Success) {
+          (binding.tickerRecyclerView.adapter as? SubscribedTickersAdapter)
+            ?.submitList(state.payload)
+        }
       }
     }
+
     launchInViewLifecycleScope {
       tickersViewModel.loadingState.collectLatest { state ->
         binding.refreshLayout.isRefreshing = state is UIResource.Loading
       }
     }
+
     launchInViewLifecycleScope {
       repeatOnLifecycle(Lifecycle.State.STARTED) {
         launch {
